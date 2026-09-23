@@ -1,0 +1,242 @@
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useDispatch, useGame } from '../game/state';
+import { playSfx } from '../game/audio';
+import { letterByChar } from '../data/letters';
+import { positionLabelKey, slotLabelKey } from '../game/questions';
+import { LetterForm, ArabicSpan, ArabicWord } from '../components/Arabic';
+import { Button, Feedback, useT } from '../components/ui';
+import type { Option, Question } from '../game/types';
+
+/* ------------------------------------------------------- answering plumbing */
+
+export interface Answered { correct: boolean; option?: Option }
+
+/**
+ * Shared answer flow for every challenge: times the response, records it in the
+ * game state (score, hearts, combo, per-letter mastery), plays the right sound,
+ * and moves on — correct answers flow on by themselves, wrong ones wait so the
+ * learner actually reads what the game is teaching them.
+ */
+export function useChallenge(question: Question, opts: { autoNextMs?: number; letterOf?: (o?: Option) => string } = {}) {
+  const dispatch = useDispatch();
+  const [result, setResult] = useState<Answered | null>(null);
+  const started = useRef(performance.now());
+  const advanced = useRef(false);
+
+  useEffect(() => {
+    started.current = performance.now();
+    advanced.current = false;
+    setResult(null);
+  }, [question.id]);
+
+  const next = useCallback(() => {
+    if (advanced.current) return;
+    advanced.current = true;
+    dispatch({ type: 'nextQuestion' });
+  }, [dispatch]);
+
+  const submit = useCallback((correct: boolean, option?: Option) => {
+    if (result) return;
+    const ms = performance.now() - started.current;
+    setResult({ correct, option });
+    dispatch({
+      type: 'answer',
+      correct,
+      challenge: question.type,
+      letter: question.targetLetter,
+      ms,
+      value: question.value,
+    });
+    playSfx(correct ? 'correct' : 'wrong');
+  }, [dispatch, question, result]);
+
+  // Correct answers carry on by themselves after a beat.
+  useEffect(() => {
+    if (!result?.correct) return;
+    const delay = opts.autoNextMs ?? 1150;
+    const id = window.setTimeout(next, delay);
+    return () => window.clearTimeout(id);
+  }, [result, next, opts.autoNextMs]);
+
+  return { result, submit, next };
+}
+
+/* ------------------------------------------------------------- explanations */
+
+/** Teaching feedback: never just "wrong", always "this is ت — look at the dots". */
+export function useExplain() {
+  const t = useT();
+  return useCallback((question: Question, result: Answered): ReactNode => {
+    if (result.correct) return t.msg(question.teachCorrect) || t('fb.correct');
+
+    const chosen = result.option?.letter;
+    if (chosen && chosen !== question.targetLetter) {
+      const l = letterByChar(chosen);
+      if (l) {
+        const name = t.lang === 'ar' ? l.nameAr : l.nameEn;
+        const hint = dotsPhrase(t, chosen) ?? '';
+        return t('fb.wrongLetter', { name: `${name} (${chosen})`, hint });
+      }
+    }
+    if (question.type === 'POSITION_DETECTION' && question.slot) {
+      return t('fb.wrongPos', { letter: question.targetLetter, where: t(slotLabelKey(question.slot)) });
+    }
+    if (question.type === 'CONTEXTUAL_FORM' && question.position) {
+      return t('fb.correctForm', {
+        form: '', name: nameOf(t, question.targetLetter), where: t(positionLabelKey(question.position)),
+      });
+    }
+    return t('fb.wrongGeneric');
+  }, [t]);
+}
+
+export function nameOf(t: ReturnType<typeof useT>, char: string): string {
+  const l = letterByChar(char);
+  if (!l) return char;
+  return t.lang === 'ar' ? l.nameAr : l.nameEn;
+}
+
+/** "Look at the two dots above." — built from the letter's own data, not a string table of guesses. */
+export function dotsPhrase(t: ReturnType<typeof useT>, char: string): string | null {
+  const l = letterByChar(char);
+  if (!l) return null;
+  if (l.dots.count === 0 || l.dots.place === 'none') return t('fb.dots0');
+  return t('fb.dots', { n: '', place: t(`dots.${l.dots.place}${l.dots.count}`) }).replace(/\s+/g, ' ');
+}
+
+/* --------------------------------------------------------------- rendering */
+
+export function OptionContent({ option, size }: { option: Option; size?: string }) {
+  const t = useT();
+  const r = option.render;
+  switch (r.kind) {
+    case 'letter':
+      return <ArabicSpan className="tile__glyph" style={size ? { fontSize: size } : undefined}>{r.char}</ArabicSpan>;
+    case 'form':
+      return <LetterForm char={r.char} position={r.position} className="tile__glyph" style={size ? { fontSize: size } : undefined} />;
+    case 'word':
+      return <ArabicWord word={r.word} size={size ?? 'clamp(1.6rem, 5vw, 2.4rem)'} />;
+    case 'slot':
+      return <span className="tile__label tile__label--big">{t(slotLabelKey(r.slot))}</span>;
+    case 'position':
+      return <span className="tile__label tile__label--big">{t(positionLabelKey(r.position))}</span>;
+    case 'text':
+      return <span className="tile__label tile__label--big">{t.lang === 'ar' ? r.ar : r.en}</span>;
+  }
+}
+
+export function OptionTile({
+  option, state, onPick, disabled, sublabel, size,
+}: {
+  option: Option;
+  state?: 'correct' | 'wrong' | 'muted';
+  onPick?: () => void;
+  disabled?: boolean;
+  sublabel?: string;
+  size?: string;
+}) {
+  return (
+    <button
+      type="button"
+      className={['tile', state ? `tile--${state}` : '', disabled ? 'tile--done' : ''].filter(Boolean).join(' ')}
+      onClick={onPick}
+      disabled={disabled}
+    >
+      {state === 'correct' && <span className="tile__mark" aria-hidden="true">✓</span>}
+      {state === 'wrong' && <span className="tile__mark" aria-hidden="true">✕</span>}
+      <OptionContent option={option} size={size} />
+      {sublabel && <span className="tile__label">{sublabel}</span>}
+    </button>
+  );
+}
+
+export function OptionGrid({
+  options, result, onPick, columns, sublabelFor, size,
+}: {
+  options: Option[];
+  result: Answered | null;
+  onPick: (o: Option) => void;
+  columns?: number;
+  sublabelFor?: (o: Option) => string | undefined;
+  size?: string;
+}) {
+  return (
+    <div
+      className="optgrid stagger"
+      style={columns ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` } : undefined}
+    >
+      {options.map((o) => {
+        let state: 'correct' | 'wrong' | 'muted' | undefined;
+        if (result) {
+          if (o.correct) state = 'correct';
+          else if (result.option?.id === o.id) state = 'wrong';
+          else state = 'muted';
+        }
+        return (
+          <OptionTile
+            key={o.id}
+            option={o}
+            state={state}
+            size={size}
+            sublabel={sublabelFor?.(o)}
+            disabled={!!result}
+            onPick={() => onPick(o)}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------- frame + foot */
+
+export function ChallengeFrame({
+  prompt, sub, children, footer, aside,
+}: { prompt: ReactNode; sub?: ReactNode; children: ReactNode; footer?: ReactNode; aside?: ReactNode }) {
+  return (
+    <div className="challenge">
+      <header className="challenge__head">
+        <h2 className="challenge__prompt">{prompt}</h2>
+        {sub && <p className="challenge__sub">{sub}</p>}
+      </header>
+      {aside}
+      <div className="challenge__body">{children}</div>
+      <footer className="challenge__foot">{footer}</footer>
+    </div>
+  );
+}
+
+/** The feedback strip plus, for a wrong answer, the button that moves on. */
+export function ResultBar({
+  question, result, onNext,
+}: { question: Question; result: Answered | null; onNext: () => void }) {
+  const t = useT();
+  const explain = useExplain();
+  if (!result) return null;
+  return (
+    <div className="resultbar">
+      <Feedback good={result.correct}>{explain(question, result)}</Feedback>
+      {!result.correct && (
+        <Button tone="gold" onClick={onNext}>{t('btn.next')} ›</Button>
+      )}
+    </div>
+  );
+}
+
+/** Shows the target letter beside the prompt so it is always the visual anchor. */
+export function TargetBadge({ char }: { char: string }) {
+  const t = useT();
+  const l = letterByChar(char);
+  const { save } = useGame();
+  return (
+    <div className="targetbadge">
+      <ArabicSpan className="targetbadge__glyph">{char}</ArabicSpan>
+      {l && (
+        <span className="targetbadge__meta">
+          <b>{t.lang === 'ar' ? l.nameAr : l.nameEn}</b>
+          {save.settings.transliteration && <span className="muted">{l.sound}</span>}
+        </span>
+      )}
+    </div>
+  );
+}

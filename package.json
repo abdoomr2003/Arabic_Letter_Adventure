@@ -1,0 +1,29 @@
+{
+  "name": "arabic-letter-adventure",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "مغامرة تحدي الحروف — Arabic Letter Adventure: a playable adventure game that teaches Arabic letters and their contextual forms.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 4173",
+    "typecheck": "tsc --noEmit",
+    "check:content": "tsx scripts/check-content.ts",
+    "playtest": "tsx scripts/playtest.ts",
+    "deeptest": "tsx scripts/deeptest.ts"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "playwright": "^1.63.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}

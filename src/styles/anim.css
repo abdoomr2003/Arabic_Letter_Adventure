@@ -1,0 +1,114 @@
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.88) translateY(14px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+
+@keyframes float-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes heart-break {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.35) rotate(-8deg); }
+  100% { transform: scale(0.85) rotate(4deg); opacity: 0.35; }
+}
+
+@keyframes glow-sweep {
+  0% { background-position: -160% 0; }
+  100% { background-position: 260% 0; }
+}
+
+@keyframes spark-out {
+  from { opacity: 1; transform: translate(0, 0) scale(1); }
+  to { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.35); }
+}
+
+@keyframes confetti-fall {
+  from { opacity: 1; transform: translateY(-12vh) rotate(0deg); }
+  to { opacity: 0.1; transform: translateY(112vh) rotate(720deg); }
+}
+
+@keyframes score-pop {
+  0% { opacity: 0; transform: translateY(6px) scale(0.8); }
+  25% { opacity: 1; transform: translateY(-6px) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-40px) scale(1); }
+}
+
+/* ------------------------------------------------------------ utility use */
+.anim-pop { animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.anim-rise { animation: rise-in 0.35s ease both; }
+.anim-fade { animation: fade-in 0.3s ease both; }
+.anim-shake { animation: shake 0.42s ease both; }
+.anim-bob { animation: float-bob 3.4s ease-in-out infinite; }
+
+/* Staggered reveal for option grids. */
+.stagger > * { animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.stagger > *:nth-child(1) { animation-delay: 0.02s; }
+.stagger > *:nth-child(2) { animation-delay: 0.07s; }
+.stagger > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger > *:nth-child(4) { animation-delay: 0.17s; }
+.stagger > *:nth-child(5) { animation-delay: 0.22s; }
+.stagger > *:nth-child(6) { animation-delay: 0.27s; }
+.stagger > *:nth-child(7) { animation-delay: 0.32s; }
+.stagger > *:nth-child(8) { animation-delay: 0.37s; }
+
+/* --------------------------------------------------------------- confetti */
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 5;
+}
+.confetti__bit {
+  position: absolute;
+  inset-block-start: 0;
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+
+/* ---------------------------------------------------------- score popper */
+.score-pop {
+  position: absolute;
+  z-index: 8;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.3rem, 4vw, 2rem);
+  color: var(--gold-300);
+  text-shadow: 0 2px 0 #7a4b00, 0 0 18px rgba(255, 212, 92, 0.8);
+  pointer-events: none;
+  animation: score-pop 1s ease-out forwards;
+}
+
+/* --------------------------------------------------- shimmering gold text */
+.shimmer {
+  background: linear-gradient(100deg, var(--gold-400) 20%, #fffbe8 42%, var(--gold-400) 62%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: glow-sweep 3.6s linear infinite;
+}
