@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import {
   GameDispatchContext, GameStateContext, useGame, useGameReducer, usePersist,
 } from './game/state';
-import { musicPlaying, setSoundEnabled, startMusic, stopMusic, unlockAudio } from './game/audio';
+import { setSoundEnabled, unlockAudio } from './game/audio';
 import { HomeScreen } from './screens/HomeScreen';
 import { MapScreen } from './screens/MapScreen';
 import { WorldScreen } from './screens/WorldScreen';
@@ -28,7 +28,7 @@ export default function App() {
 
 function Shell() {
   const state = useGame();
-  const { lang, sound, music, reducedMotion, highContrast } = state.save.settings;
+  const { lang, sound, reducedMotion, highContrast } = state.save.settings;
 
   // Document-level language, direction and accessibility flags.
   useEffect(() => {
@@ -46,11 +46,6 @@ function Shell() {
   }, [highContrast]);
 
   useEffect(() => { setSoundEnabled(sound); }, [sound]);
-
-  useEffect(() => {
-    if (music && sound) startMusic();
-    else if (musicPlaying()) stopMusic();
-  }, [music, sound]);
 
   // Browsers hold audio until the first gesture; take the first one we get.
   useEffect(() => {

@@ -192,7 +192,6 @@ const AR: Record<string, Entry> = {
   // — settings —
   'set.lang': 'اللغة',
   'set.sound': 'المؤثرات الصوتية',
-  'set.music': 'الموسيقى',
   'set.motion': 'تقليل الحركة',
   'set.translit': 'إظهار النطق اللاتيني',
   'set.contrast': 'تباين عالٍ',
@@ -395,7 +394,6 @@ const EN: Record<string, Entry> = {
 
   'set.lang': 'Language',
   'set.sound': 'Sound effects',
-  'set.music': 'Music',
   'set.motion': 'Reduce motion',
   'set.translit': 'Show transliteration',
   'set.contrast': 'High contrast',

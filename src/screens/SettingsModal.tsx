@@ -29,12 +29,6 @@ export function SettingsModal() {
         </div>
 
         <Switch label={`🔊 ${t('set.sound')}`} on={s.sound} onToggle={(v) => set('sound', v)} />
-        <Switch
-          label={`🎵 ${t('set.music')}`}
-          on={s.music}
-          onToggle={(v) => set('music', v)}
-          hint={t.lang === 'ar' ? 'موسيقى خلفية هادئة' : 'Gentle background music'}
-        />
         <Switch label={`🍃 ${t('set.motion')}`} on={s.reducedMotion} onToggle={(v) => set('reducedMotion', v)} />
         <Switch
           label={`🔤 ${t('set.translit')}`}

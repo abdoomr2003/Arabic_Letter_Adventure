@@ -36,7 +36,7 @@ function seed(lang: 'ar' | 'en') {
   }
   return JSON.stringify({
     version: 1,
-    settings: { lang, sound: false, music: false, reducedMotion: true, transliteration: true, highContrast: false },
+    settings: { lang, sound: false, reducedMotion: true, transliteration: true, highContrast: false },
     profile: { name: lang === 'ar' ? 'ليلى' : 'Layla', avatar: '🦊', createdAt: Date.now() },
     progress: {
       xp: 4200, coins: 1840, totalScore: 52000, levels, mastery: {

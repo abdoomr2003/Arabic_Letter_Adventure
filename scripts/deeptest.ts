@@ -43,7 +43,7 @@ function seedSave(levelId: string) {
   }
   return {
     version: 1,
-    settings: { lang: 'en', sound: false, music: false, reducedMotion: false, transliteration: true, highContrast: false },
+    settings: { lang: 'en', sound: false, reducedMotion: false, transliteration: true, highContrast: false },
     profile: { name: 'Tester', avatar: '🦊', createdAt: Date.now() },
     progress: {
       xp: 3000, coins: 2000, totalScore: 40000, levels, mastery: {},

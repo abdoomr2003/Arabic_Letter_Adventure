@@ -10,7 +10,6 @@ const VERSION = 1;
 export const DEFAULT_SETTINGS: Settings = {
   lang: 'ar',
   sound: true,
-  music: false,
   reducedMotion: false,
   transliteration: true,
   highContrast: false,
