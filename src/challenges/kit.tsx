@@ -23,11 +23,15 @@ export function useChallenge(question: Question, opts: { autoNextMs?: number; le
   const started = useRef(performance.now());
   const advanced = useRef(false);
 
-  useEffect(() => {
+  // Clear the previous question's answer during render rather than in an effect,
+  // so the incoming question is never drawn for a frame wearing the old result.
+  const [resultFor, setResultFor] = useState(question.id);
+  if (resultFor !== question.id) {
+    setResultFor(question.id);
+    setResult(null);
     started.current = performance.now();
     advanced.current = false;
-    setResult(null);
-  }, [question.id]);
+  }
 
   const next = useCallback(() => {
     if (advanced.current) return;

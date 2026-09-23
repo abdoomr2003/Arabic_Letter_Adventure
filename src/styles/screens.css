@@ -413,9 +413,21 @@
 }
 .aword__cell--tap { pointer-events: auto; cursor: pointer; background: transparent; }
 .aword__cell--tap:hover:not(:disabled) { background: rgba(111, 227, 255, 0.22); box-shadow: 0 0 0 2px rgba(111, 227, 255, 0.6); }
-.aword__cell--hl { background: rgba(255, 212, 92, 0.26); box-shadow: 0 0 0 2px var(--gold-400), 0 0 18px rgba(255, 212, 92, 0.5); }
-.aword__cell--good { background: rgba(121, 224, 106, 0.3); box-shadow: 0 0 0 3px #79e06a, 0 0 20px rgba(121, 224, 106, 0.6); }
-.aword__cell--bad { background: rgba(255, 107, 120, 0.3); box-shadow: 0 0 0 3px var(--red-400); }
+/* A highlighted letter is marked with a tint and a thick underline rather than a
+   full box: an Arabic glyph plus its harakat is far taller than it is wide, so a
+   ring around it reads as a card and crowds its neighbours. */
+.aword__cell--hl {
+  background: rgba(255, 212, 92, 0.2);
+  box-shadow: inset 0 -5px 0 var(--gold-400), 0 0 16px rgba(255, 212, 92, 0.35);
+}
+.aword__cell--good {
+  background: rgba(121, 224, 106, 0.26);
+  box-shadow: inset 0 -5px 0 #79e06a, 0 0 18px rgba(121, 224, 106, 0.45);
+}
+.aword__cell--bad {
+  background: rgba(255, 107, 120, 0.26);
+  box-shadow: inset 0 -5px 0 var(--red-400), 0 0 18px rgba(255, 107, 120, 0.45);
+}
 
 /* ------------------------------------------------------------- form strip */
 .formstrip {

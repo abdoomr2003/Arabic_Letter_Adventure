@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from '../game/state';
 import { playSfx } from '../game/audio';
 import { Button, Feedback, useT } from '../components/ui';
@@ -20,11 +20,17 @@ export function ShapeMatch({ question }: { question: Question }) {
   const [picked, setPicked] = useState<Record<string, boolean>>({});
   const [done, setDone] = useState(false);
   const [lastWrong, setLastWrong] = useState<Option | null>(null);
-  const [startedAt] = useState(() => performance.now());
+  const [startedAt, setStartedAt] = useState(() => performance.now());
+  const [pickedFor, setPickedFor] = useState(question.id);
+  if (pickedFor !== question.id) {
+    setPickedFor(question.id);
+    setPicked({});
+    setDone(false);
+    setLastWrong(null);
+    setStartedAt(performance.now());
+  }
 
   const found = Object.entries(picked).filter(([, ok]) => ok).length;
-
-  useEffect(() => { setPicked({}); setDone(false); setLastWrong(null); }, [question.id]);
 
   const pick = (o: Option) => {
     if (picked[o.id] !== undefined || done) return;

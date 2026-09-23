@@ -253,6 +253,7 @@ async function main() {
   check('says what was learned', (res.learned ?? '').length > 10, res.learned);
   await shot(page, 'result');
 
+  await page.waitForTimeout(500); // let any debounced write land
   const save1: any = await readSave(page);
   check('progress persisted to localStorage', !!save1?.progress);
   check('level marked complete', save1.progress.levels['alif-1']?.completed === true);
@@ -310,11 +311,30 @@ async function main() {
     check('your clue questions really get answered', sawClueAnswer);
     await shot(page, 'duel');
 
-    const afterDuel = await snapshot(page);
+    let afterDuel = await snapshot(page);
     check('duel resolved into a real outcome',
       ['duel-won', 'rush-intro', 'fail', 'result'].includes(afterDuel.kind), afterDuel.kind);
-    check('the duel is winnable when played correctly',
-      afterDuel.kind !== 'fail', afterDuel.kind);
+
+    // The duel is a race against a rival that is also deducing, so a single run
+    // can genuinely be lost — `npm run balance` is what measures the win rate.
+    // What must hold here is that losing leaves a usable retry, so take it.
+    let attempts = 1;
+    while (afterDuel.kind === 'fail' && attempts < 4) {
+      check(`lost duel offers a retry (attempt ${attempts})`,
+        (await page.locator('.fail__actions .btn').count()) >= 2);
+      await page.locator('.fail__actions .btn').first().click();
+      await page.waitForSelector('.duel__grid--choose', { timeout: 8000 });
+      attempts++;
+      for (let i = 0; i < 40; i++) {
+        const s = await snapshot(page);
+        if (s.kind !== 'duel' && s.kind !== 'duel-choose') break;
+        await step(page, lang);
+        await page.waitForTimeout(250);
+      }
+      afterDuel = await snapshot(page);
+    }
+    check('the duel can be won, retrying if the rival got there first',
+      afterDuel.kind !== 'fail', `${afterDuel.kind} after ${attempts} attempt(s)`);
 
     if (afterDuel.kind === 'duel-won') { await step(page, lang); await page.waitForTimeout(500); }
 

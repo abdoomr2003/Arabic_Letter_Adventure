@@ -11,6 +11,76 @@ core of the gameplay.
 
 ---
 
+## Screens
+
+Every image below is a real frame captured by the automated playthrough
+(`npm run playtest -- --shots` and `npm run sweep`) — the game as it actually runs,
+not a mockup.
+
+### The signature moment
+
+The letter is the hero of the screen; its shapes are revealed one at a time, and each
+one lands in a real word where the letter genuinely takes that form.
+
+| ب — four shapes | ا — only two, and it says why |
+| --- | --- |
+| ![Letter discovery for baa](docs/screenshots/06-discovery-baa.jpg) | ![Letter discovery for alif](docs/screenshots/07-discovery-alif.jpg) |
+
+Shape Shifter puts the transformation under the learner's hand — move the letter to
+the beginning, middle or end and watch it change:
+
+| Shape Shifter (Arabic) | Discovery (Arabic) |
+| --- | --- |
+| ![Shape Shifter in Arabic](docs/screenshots/09-shape-shifter-arabic.jpg) | ![Discovery screen in Arabic](docs/screenshots/08-discovery-arabic.jpg) |
+
+### Home and the adventure map
+
+| Home — العربية | Home — English |
+| --- | --- |
+| ![Home screen in Arabic](docs/screenshots/01-home-arabic.jpg) | ![Home screen in English](docs/screenshots/02-home-english.jpg) |
+
+| Seven worlds, six locked | After the first world is cleared |
+| --- | --- |
+| ![World map with locked worlds](docs/screenshots/03-world-map.jpg) | ![World map showing progress](docs/screenshots/04-world-map-progress.jpg) |
+
+| Inside a world | A challenge |
+| --- | --- |
+| ![World level list](docs/screenshots/05-world-levels.jpg) | ![Which shape belongs to jeem](docs/screenshots/10-challenge.jpg) |
+
+### The boss: Secret Letter Challenge
+
+Choose a secret letter, guess your rival's, then name three words with the letter at
+the beginning, the middle and the end — against the clock.
+
+| Choose your secret | The duel |
+| --- | --- |
+| ![Choosing a secret letter](docs/screenshots/11-duel-secret-letter.jpg) | ![The secret letter duel](docs/screenshots/12-duel.jpg) |
+
+| 30-second round | 3-word challenge |
+| --- | --- |
+| ![Timed round intro](docs/screenshots/13-timed-round-intro.jpg) | ![Three word challenge](docs/screenshots/14-three-word-challenge.jpg) |
+
+### Rewards and progress
+
+| Level complete | Boss defeated |
+| --- | --- |
+| ![Level complete screen](docs/screenshots/15-level-complete.jpg) | ![Letter champion screen](docs/screenshots/16-boss-complete.jpg) |
+
+| Adventurer profile | How to play |
+| --- | --- |
+| ![Player profile](docs/screenshots/17-profile.jpg) | ![How to play](docs/screenshots/18-how-to-play.jpg) |
+
+### On a phone, and the settings
+
+<p align="center">
+  <img src="docs/screenshots/20-mobile-arabic.jpg" alt="Discovery screen on a phone in Arabic" width="260">
+  <img src="docs/screenshots/21-mobile-english.jpg" alt="World map on a phone in English" width="260">
+</p>
+
+![Settings](docs/screenshots/19-settings.jpg)
+
+---
+
 ## Run it
 
 ```bash
@@ -32,6 +102,8 @@ npm run typecheck      # tsc --noEmit
 npm run check:content   # verifies the letter/word data can feed every challenge
 npm run playtest        # plays the game in a real browser (needs `npm run dev`)
 npm run deeptest        # plays the intermediate/advanced levels and the boss
+npm run balance         # measures how often each boss duel is actually winnable
+npm run sweep           # captures every screen in both languages at 3 viewports
 ```
 
 `npm run playtest -- --shots --shotdir /tmp/shots` writes screenshots as it plays.
@@ -136,12 +208,19 @@ Straight out of the deck's own rulebook — *choose a secret letter, write it do
 guess your rival's letter, first to discover it wins, then name 3 words containing
 it, at the beginning, middle or end*.
 
-Both sides really deduce. The rival keeps its own candidate list and asks the question
-that best halves it; it narrows that list with the answer **you** give about **your**
-secret. So the way to keep your letter safe is to actually know its dots, its tail,
-its height and its joining — answering wrongly costs a heart and is corrected on the
-spot. In the beginner worlds a clue crosses out what it eliminates for you; from the
-middle worlds on, applying the clue is your job.
+Both sides really deduce. The rival keeps its own candidate list and narrows it with
+the answer **you** give about **your** secret. So the way to keep your letter safe is
+to actually know its dots, its tail, its height and its joining — answering wrongly
+costs a heart and is corrected on the spot.
+
+The rival gets sharper as the adventure goes on: in the early worlds it asks a
+reasonable question rather than the best one, by the last worlds it asks the question
+that halves its list exactly. In the beginner worlds a clue also crosses out what it
+eliminates for you; from the middle worlds on, applying the clue is your job.
+
+`npm run balance` measures this rather than assuming it: it plays each tier's duel
+correctly eight times and reports the win rate. As tuned, that is 8/8 at the first
+boss, 7/8 in the middle and 6/8 at the last — a curve, not a wall.
 
 ### Hearts, score, stars, coins, XP
 

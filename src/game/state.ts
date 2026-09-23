@@ -320,13 +320,26 @@ export function useDispatch(): Dispatch<Action> {
   return v;
 }
 
-/** Persist whenever the durable part of the state changes. */
+/**
+ * Persist whenever the durable part of the state changes.
+ *
+ * Ordinary in-level updates (score, mastery, a settings toggle) are debounced,
+ * because they happen on every answer.  Finishing a level is different: it is the
+ * moment the player earns their stars, coins and unlock, so it is written
+ * straight away rather than 250ms later.
+ */
 export function usePersist(state: GameState) {
   const initial = useRef(state.save);
+  const lastLevels = useRef(state.save.progress.levels);
   useEffect(() => {
     // Nothing has changed yet on the very first render — writing here would only
     // rewrite what was just read.
     if (state.save === initial.current) return;
+    if (state.save.progress.levels !== lastLevels.current) {
+      lastLevels.current = state.save.progress.levels;
+      store.saveNow(state.save);
+      return;
+    }
     store.save(state.save);
   }, [state.save]);
   useEffect(() => {

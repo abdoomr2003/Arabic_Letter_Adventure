@@ -221,21 +221,9 @@ export const LETTERS: Letter[] = RAW.map((l) => ({
 }));
 
 const BY_CHAR = new Map(LETTERS.map((l) => [l.char, l]));
-const BY_ID = new Map(LETTERS.map((l) => [l.id, l]));
 
 export function letterByChar(char: string): Letter | undefined {
   return BY_CHAR.get(char);
-}
-
-export function letterById(id: string): Letter | undefined {
-  return BY_ID.get(id);
-}
-
-/** Letters that are easy to confuse with `char`, as full Letter records. */
-export function confusables(char: string): Letter[] {
-  const l = BY_CHAR.get(char);
-  if (!l) return [];
-  return l.confusableWith.map((c) => BY_CHAR.get(c)).filter((x): x is Letter => !!x);
 }
 
 export const ALL_CHARS = LETTERS.map((l) => l.char);

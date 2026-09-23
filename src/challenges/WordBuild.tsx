@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch } from '../game/state';
 import { playSfx } from '../game/audio';
 import { ArabicSpan, ArabicWord } from '../components/Arabic';
@@ -23,6 +23,14 @@ export function WordBuild({ question }: { question: Question }) {
   const { showTranslit, showMeaning } = useSupport();
   const { result, submit, next } = useChallenge(question, { autoNextMs: 2200 });
   const [placed, setPlaced] = useState<number[]>([]);
+  // Reset during render, not in an effect: the pieces are rebuilt for the new
+  // question in this very render, so indices from the previous one must not
+  // survive even for a single frame.
+  const [placedFor, setPlacedFor] = useState(question.id);
+  if (placedFor !== question.id) {
+    setPlacedFor(question.id);
+    setPlaced([]);
+  }
 
   const word = question.word;
 
@@ -32,12 +40,10 @@ export function WordBuild({ question }: { question: Question }) {
     return shuffle(makeRng(word.ar.length * 7919 + letters.length), letters);
   }, [word]);
 
-  useEffect(() => { setPlaced([]); }, [question.id]);
-
   if (!word) return null;
 
   const target = splitLetters(word.ar).map((l) => l.base);
-  const built = placed.map((i) => pieces[i].base);
+  const built = placed.map((i) => pieces[i]?.base).filter((b): b is string => b !== undefined);
   const builtText = built.join('');
   const complete = built.length === target.length;
 

@@ -8,6 +8,6 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
-  server: { host: true, port: 5173 },
+  server: { host: true, port: 5173, allowedHosts: ['.trycloudflare.com'] },
   build: { chunkSizeWarningLimit: 1500 },
 });

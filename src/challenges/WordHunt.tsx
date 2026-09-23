@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ArabicWord } from '../components/Arabic';
 import { useSupport, useT } from '../components/ui';
 import { ChallengeFrame, ResultBar, TargetBadge, useChallenge } from './kit';
@@ -19,8 +19,11 @@ export function WordHunt({ question }: { question: Question }) {
   const { showTranslit, showMeaning } = useSupport();
   const { result, submit, next } = useChallenge(question, { autoNextMs: 1400 });
   const [taps, setTaps] = useState<{ index: number; correct: boolean }[]>([]);
-
-  useEffect(() => { setTaps([]); }, [question.id]);
+  const [tapsFor, setTapsFor] = useState(question.id);
+  if (tapsFor !== question.id) {
+    setTapsFor(question.id);
+    setTaps([]);
+  }
 
   const word = question.word;
   if (!word) return null;

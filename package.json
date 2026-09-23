@@ -12,7 +12,8 @@
     "check:content": "tsx scripts/check-content.ts",
     "playtest": "tsx scripts/playtest.ts",
     "deeptest": "tsx scripts/deeptest.ts",
-    "sweep": "tsx scripts/sweep.ts"
+    "sweep": "tsx scripts/sweep.ts",
+    "balance": "tsx scripts/balance.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
