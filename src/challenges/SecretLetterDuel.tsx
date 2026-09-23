@@ -5,10 +5,10 @@ import { ArabicSpan } from '../components/Arabic';
 import { Button, Feedback, Panel, useT } from '../components/ui';
 import { dotsPhrase, nameOf } from './kit';
 import {
-  answerFor, applyClue, clueDeck, duelCandidates, makeRival,
-  rivalChooseClue, rivalGuess, rivalShouldGuess, type Clue, type RivalState,
+  answerFor, applyClue, clueDeck, duelCandidates, makeRival, rankClues,
+  rivalChooseClue, rivalGuess, rivalShouldGuess, skillForTier, type Clue, type RivalState,
 } from '../game/duel';
-import { makeRng, sample } from '../game/rng';
+import { makeRng } from '../game/rng';
 import { letterByChar } from '../data/letters';
 
 type Stage = 'choose' | 'duel' | 'guessing' | 'won';
@@ -51,6 +51,7 @@ export function SecretLetterDuel({ letters }: { letters: string[] }) {
   // letters out, so a clue crosses out what it eliminates for them.  From the
   // middle worlds on, applying the clue is their job — that is the deduction.
   const autoStrike = (level?.tier ?? 'beginner') === 'beginner';
+  const skill = skillForTier(level?.tier ?? 'beginner');
 
   const logRef = useRef<HTMLDivElement>(null);
   useEffect(() => { logRef.current?.scrollTo({ top: 1e6, behavior: 'smooth' }); }, [log]);
@@ -59,7 +60,14 @@ export function SecretLetterDuel({ letters }: { letters: string[] }) {
   if (stage === 'choose') {
     return (
       <div className="duel">
+        <div className="backdrop backdrop--soft backdrop--scrim duel__bg"
+          style={{ backgroundImage: 'url(./art/bg-duel.jpg)' }} />
         <header className="duel__head">
+          <div className="duel__vs">
+            <img src="./art/char-hero.jpg" alt="" className="duel__portrait duel__portrait--you" />
+            <span className="duel__vslabel">VS</span>
+            <img src="./art/char-rival.jpg" alt="" className="duel__portrait duel__portrait--rival" />
+          </div>
           <h2 className="duel__title">{t('boss.step1')}</h2>
           <p className="duel__sub">{t('boss.step1hint')}</p>
         </header>
@@ -88,8 +96,10 @@ export function SecretLetterDuel({ letters }: { letters: string[] }) {
   const rivalSecret = rival.secret;
 
   /* --------------------------------------------------------------- your move */
-  const availableClues = deck.filter((c) => !myClues.includes(c.id));
-  const offered = sample(makeRng(seed + round * 31), availableClues, 3);
+  // Offer the questions that actually narrow what is still on the board — an
+  // option that cannot rule anything out would only waste a turn.
+  const alive = candidates.filter((c) => !struck.has(c));
+  const offered = rankClues(deck, alive.length > 1 ? alive : candidates, myClues).slice(0, 3);
 
   const askClue = (clue: Clue) => {
     const yes = answerFor(clue, rivalSecret);
@@ -113,8 +123,8 @@ export function SecretLetterDuel({ letters }: { letters: string[] }) {
 
   /* ------------------------------------------------------------- rival's move */
   const rivalTurn = () => {
-    const clue = rivalChooseClue(rival, deck);
-    if (rivalShouldGuess(rival, deck) || !clue) {
+    const clue = rivalChooseClue(rival, deck, skill);
+    if (rivalShouldGuess(rival, deck, skill) || !clue) {
       const guess = rivalGuess(rival, seed + round * 7);
       const right = guess === secret;
       setLog((l) => [...l, {
@@ -174,11 +184,13 @@ export function SecretLetterDuel({ letters }: { letters: string[] }) {
   /* ---------------------------------------------------------------- guessing */
   const makeGuess = (c: string) => {
     const right = c === rivalSecret;
+    // The letter being learned about is the rival's secret — a wrong poke at some
+    // other tile says nothing about whether you know *that* letter.
     dispatch({
       type: 'answer',
       correct: right,
       challenge: 'BOSS_SECRET_LETTER',
-      letter: c,
+      letter: rivalSecret,
       ms: performance.now() - started.current,
       value: 400,
     });
@@ -216,7 +228,14 @@ export function SecretLetterDuel({ letters }: { letters: string[] }) {
 
   return (
     <div className="duel">
+      <div className="backdrop backdrop--soft backdrop--scrim duel__bg"
+        style={{ backgroundImage: 'url(./art/bg-guess.jpg)' }} />
       <header className="duel__head">
+        <div className="duel__vs">
+          <img src="./art/char-hero.jpg" alt="" className="duel__portrait duel__portrait--you" />
+          <span className="duel__vslabel">VS</span>
+          <img src="./art/char-rival.jpg" alt="" className="duel__portrait duel__portrait--rival" />
+        </div>
         <h2 className="duel__title">{t('boss.guessTitle')}</h2>
         <p className="duel__sub">{t(autoStrike ? 'boss.autoRule' : 'boss.tapToRule')}</p>
       </header>
@@ -295,7 +314,7 @@ export function SecretLetterDuel({ letters }: { letters: string[] }) {
 
       {correction && !pending && (
         <Feedback good={false}>
-          {correction} {secret ? dotsPhrase(t, secret) : ''}
+          {`${correction} ${secret ? dotsPhrase(t, secret) ?? '' : ''}`.trim()}
         </Feedback>
       )}
 

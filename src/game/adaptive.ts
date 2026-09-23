@@ -94,11 +94,3 @@ export function similarAccuracy(progress: Progress): number | null {
   if (seen === 0) return null;
   return Math.max(0, 1 - errors / seen);
 }
-
-/**
- * Starting hearts.  Beginners get a little more room; the number never changes
- * mid-level, so the HUD always means what it says.
- */
-export function livesFor(tier: 'beginner' | 'intermediate' | 'advanced'): number {
-  return tier === 'beginner' ? 3 : tier === 'intermediate' ? 3 : 3;
-}

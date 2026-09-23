@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useCurrentLevel, useDispatch, useGame } from '../game/state';
+import { useCurrentLevel, useDispatch } from '../game/state';
 import { canPronounce, onVoicesReady, playSfx, pronounce } from '../game/audio';
-import { ArabicSpan, ArabicWord, FormStrip, LetterForm } from '../components/Arabic';
-import { Button, useT } from '../components/ui';
+import { ArabicSpan, ArabicWord, FormStrip, LetterForm, RichText } from '../components/Arabic';
+import { Button, useSupport, useT } from '../components/ui';
 import { availablePositions, letterSpans, sameLetter } from '../game/arabic';
 import { positionLabelKey, shapeShiftSteps } from '../game/questions';
 import { letterByChar } from '../data/letters';
@@ -19,7 +19,7 @@ import { worldOf } from '../data/worlds';
 export function LetterDiscovery({ letter }: { letter: string }) {
   const t = useT();
   const dispatch = useDispatch();
-  const { save } = useGame();
+  const { showTranslit, showMeaning } = useSupport();
   const level = useCurrentLevel();
   const l = letterByChar(letter);
   const world = worldOf(letter);
@@ -72,7 +72,7 @@ export function LetterDiscovery({ letter }: { letter: string }) {
             <h1 className="discovery__name">{name}</h1>
             <p className="discovery__sound">
               <span className="chip chip--cyan">{l.sound}</span>
-              {save.settings.transliteration && <span className="chip">{l.translit}</span>}
+              {showTranslit && <span className="chip">{l.translit}</span>}
             </p>
             <p className="discovery__hint">{t.lang === 'ar' ? l.soundHintAr : l.soundHintEn}</p>
             {world && (
@@ -95,11 +95,13 @@ export function LetterDiscovery({ letter }: { letter: string }) {
             labels={positions.map((p) => t(positionLabelKey(p)))}
           />
           <p className="discovery__formnote">
-            {positions.length === 1
-              ? t('disc.oneForm', { name })
-              : positions.length === 2
-                ? t('disc.twoForms', { name })
-                : t('disc.fourForms', { name })}
+            <RichText>
+              {positions.length === 1
+                ? t('disc.oneForm', { name })
+                : positions.length === 2
+                  ? t('disc.twoForms', { name })
+                  : t('disc.fourForms', { name })}
+            </RichText>
           </p>
           {formsDone && positions.length > 1 && (
             <p className="discovery__same anim-pop">✨ {t('disc.sameLetter')}</p>
@@ -139,10 +141,13 @@ export function LetterDiscovery({ letter }: { letter: string }) {
                       </button>
                     )}
                   </div>
-                  <span className="discovery__wordmeta">
-                    {save.settings.transliteration && <i>{s.example.word.translit} · </i>}
-                    {s.example.word.en}
-                  </span>
+                  {(showTranslit || showMeaning) && (
+                    <span className="discovery__wordmeta">
+                      {showTranslit && <i>{s.example.word.translit}</i>}
+                      {showTranslit && showMeaning && ' · '}
+                      {showMeaning && s.example.word.en}
+                    </span>
+                  )}
                   <span className="discovery__inline" aria-hidden="true">
                     <LetterForm char={letter} position={s.position} />
                   </span>

@@ -1,7 +1,7 @@
 import {
   availablePositions, hasPosition, sameLetter, type Position, type Slot,
 } from './arabic';
-import { ALL_CHARS, letterByChar, type Letter } from '../data/letters';
+import { ALL_CHARS, letterByChar } from '../data/letters';
 import {
   wordsWithLetter, wordsWithLetterAt, wordsWithForm, type Word, type WordHit,
 } from '../data/words';
@@ -25,12 +25,6 @@ const SLOT_KEY: Record<Slot, string> = {
 
 export const positionLabelKey = (p: Position) => POS_KEY[p];
 export const slotLabelKey = (s: Slot) => SLOT_KEY[s];
-
-/** "Look at the two dots above." — built from the letter's own data. */
-export function dotsHintMsg(l: Letter) {
-  if (l.dots.count === 0 || l.dots.place === 'none') return msg('fb.dots0');
-  return msg('fb.dots', { n: '', place: `«${l.dots.count}»` });
-}
 
 let uid = 0;
 const nextId = () => `q${++uid}`;

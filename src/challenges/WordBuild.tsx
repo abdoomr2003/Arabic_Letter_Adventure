@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from '../game/state';
 import { playSfx } from '../game/audio';
 import { ArabicSpan, ArabicWord } from '../components/Arabic';
-import { Button, useT } from '../components/ui';
+import { Button, useSupport, useT } from '../components/ui';
 import { ChallengeFrame, ResultBar, useChallenge } from './kit';
 import { analyzeWord, splitLetters, stripDiacritics } from '../game/arabic';
 import { positionLabelKey } from '../game/questions';
@@ -20,6 +20,7 @@ import type { Question } from '../game/types';
 export function WordBuild({ question }: { question: Question }) {
   const t = useT();
   const dispatch = useDispatch();
+  const { showTranslit, showMeaning } = useSupport();
   const { result, submit, next } = useChallenge(question, { autoNextMs: 2200 });
   const [placed, setPlaced] = useState<number[]>([]);
 
@@ -39,7 +40,6 @@ export function WordBuild({ question }: { question: Question }) {
   const built = placed.map((i) => pieces[i].base);
   const builtText = built.join('');
   const complete = built.length === target.length;
-  const showModel = question.difficulty < 3;
 
   const check = () => {
     const ok = built.join('') === target.join('');
@@ -73,15 +73,17 @@ export function WordBuild({ question }: { question: Question }) {
       prompt={t.msg(question.prompt)}
       sub={t.msg(question.subPrompt)}
       aside={
+        // The word to build is named in the prompt; this is the picture cue and,
+        // for learners reading the English interface, the meaning.
         <div className="build__goal">
           {word.emoji && <span className="build__emoji" aria-hidden="true">{word.emoji}</span>}
-          <div className="col" style={{ gap: 2 }}>
-            <span className="build__en">{word.en}</span>
-            <span className="build__translit">{word.translit}</span>
+          <div className="build__model">
+            <ArabicWord word={word} size="clamp(1.5rem, 5vw, 2.2rem)" />
           </div>
-          {showModel && (
-            <div className="build__model">
-              <ArabicWord word={word} size="clamp(1.5rem, 5vw, 2.2rem)" />
+          {(showTranslit || showMeaning) && (
+            <div className="col" style={{ gap: 2 }}>
+              {showMeaning && <span className="build__en">{word.en}</span>}
+              {showTranslit && <span className="build__translit">{word.translit}</span>}
             </div>
           )}
         </div>

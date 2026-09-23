@@ -5,7 +5,7 @@ import { WORLD_BY_ID } from '../data/worlds';
 import { letterByChar } from '../data/letters';
 import { availablePositions } from '../game/arabic';
 import { playSfx } from '../game/audio';
-import { ArabicSpan, FormStrip } from '../components/Arabic';
+import { ArabicSpan, FormStrip, RichText } from '../components/Arabic';
 import { Button, Confetti, CountUp, Panel, Stars, useT } from '../components/ui';
 import { positionLabelKey } from '../game/questions';
 
@@ -68,9 +68,11 @@ export function ResultScreen() {
           {level.kind === 'letter' && info && (
             <Panel variant="glass" className="result__learned">
               <p className="result__learnedtext">
-                {forms.length > 1
-                  ? t('res.learned', { letter })
-                  : t('res.learnedOne', { letter })}
+                <RichText>
+                  {forms.length > 1
+                    ? t('res.learned', { letter })
+                    : t('res.learnedOne', { letter })}
+                </RichText>
               </p>
               {forms.length > 1 && (
                 <FormStrip

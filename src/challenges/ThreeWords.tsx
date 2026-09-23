@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useCurrentLevel, useDispatch } from '../game/state';
 import { playSfx } from '../game/audio';
-import { ArabicSpan, ArabicWord } from '../components/Arabic';
-import { Button, Feedback, TimerChip, useCountdown, useT } from '../components/ui';
+import { ArabicSpan, ArabicWord, RichText } from '../components/Arabic';
+import { Button, Feedback, TimerChip, useCountdown, useSupport, useT } from '../components/ui';
 import { buildThreeWords, slotLabelKey } from '../game/questions';
 import { letterSpans, sameLetter, wordHasLetterAt } from '../game/arabic';
 import { pick, makeRng } from '../game/rng';
@@ -21,6 +21,7 @@ import { pick, makeRng } from '../game/rng';
 export function ThreeWords({ letters, seconds }: { letters: string[]; seconds: number }) {
   const t = useT();
   const dispatch = useDispatch();
+  const { showMeaning } = useSupport();
   const level = useCurrentLevel();
   const seed = useMemo(() => Math.floor(Math.random() * 1e9), []);
 
@@ -47,12 +48,16 @@ export function ThreeWords({ letters, seconds }: { letters: string[]; seconds: n
   if (!started) {
     return (
       <div className="rush rush--intro">
+        <div className="backdrop backdrop--soft rush__bg"
+          style={{ backgroundImage: 'url(./art/bg-rush.jpg)' }} />
         <div className="rush__introcard anim-pop">
           <div className="timer timer--urgent" aria-hidden="true">
             ⏱️ {String(Math.floor(seconds / 60)).padStart(2, '0')}:{String(seconds % 60).padStart(2, '0')}
           </div>
           <h2 className="rush__introtitle">{t('boss.rushIntro', { s: seconds })}</h2>
-          <p className="rush__introsub">{t('boss.threeWordsHint', { letter: target })}</p>
+          <p className="rush__introsub">
+            <RichText>{t('boss.threeWordsHint', { letter: target })}</RichText>
+          </p>
           <ArabicSpan className="hero-letter rush__introletter">{target}</ArabicSpan>
           <Button tone="green" size="lg" onClick={() => { playSfx('combo'); setStarted(true); }}>
             ▶ {t('btn.startGuess')}
@@ -129,6 +134,8 @@ export function ThreeWords({ letters, seconds }: { letters: string[]; seconds: n
 
   return (
     <div className="rush">
+      <div className="backdrop backdrop--soft rush__bg"
+        style={{ backgroundImage: 'url(./art/bg-rush.jpg)' }} />
       <div className="rush__bar">
         <TimerChip left={left} total={seconds} />
         <div className="rush__letter">
@@ -147,7 +154,7 @@ export function ThreeWords({ letters, seconds }: { letters: string[]; seconds: n
       </div>
 
       <h2 className="rush__prompt">
-        {t('q.pickWordWith', { letter: target, where: t(slotLabelKey(slot.slot)) })}
+        <RichText>{t('q.pickWordWith', { letter: target, where: t(slotLabelKey(slot.slot)) })}</RichText>
       </h2>
       <p className="rush__slotname">{t(`boss.wordSlot${index + 1}`)}</p>
 
@@ -162,7 +169,7 @@ export function ThreeWords({ letters, seconds }: { letters: string[]; seconds: n
           >
             {w.emoji && <span className="tile__emoji" aria-hidden="true">{w.emoji}</span>}
             <ArabicWord word={w} size="clamp(1.5rem, 5vw, 2.2rem)" />
-            <span className="tile__label">{w.en}</span>
+            {showMeaning && <span className="tile__label">{w.en}</span>}
           </button>
         ))}
       </div>

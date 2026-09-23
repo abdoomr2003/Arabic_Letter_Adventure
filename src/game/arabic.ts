@@ -134,10 +134,11 @@ export function sameLetter(a: string, b: string): boolean {
  * Work out which contextual form each letter of a word is actually rendered in,
  * by applying the real joining rules rather than guessing from the index.
  *
- * A letter is joined to its right neighbour (the previous letter in reading order)
- * when that neighbour is dual- or right-joining; it is joined to its left
- * neighbour (the next letter) when the letter itself is dual-joining and the
- * next letter can be joined to.
+ * A letter joins backwards (to the previous letter in reading order) when that
+ * letter can join forwards — only dual-joining letters can.  It joins forwards
+ * when it is itself dual-joining *and* the next letter can accept a join on its
+ * right — a non-joining character such as ء never accepts one, which is why the
+ * ي of شَيْء is final rather than medial.
  */
 export function analyzeWord(word: string): {
   base: string;
@@ -152,8 +153,9 @@ export function analyzeWord(word: string): {
     const selfType = joiningType(l.base);
     // Joins backwards (to the previous letter) if the previous letter can join forwards.
     const joinsPrev = prev !== null && joiningType(prev) === 'dual' && selfType !== 'none';
-    // Joins forwards (to the next letter) if this letter is dual-joining and a letter follows.
-    const joinsNext = next !== null && selfType === 'dual';
+    // Joins forwards only if this letter is dual-joining and the next letter
+    // will actually accept the connection.
+    const joinsNext = next !== null && selfType === 'dual' && joiningType(next) !== 'none';
     let position: Position;
     if (joinsPrev && joinsNext) position = 'medial';
     else if (joinsPrev) position = 'final';

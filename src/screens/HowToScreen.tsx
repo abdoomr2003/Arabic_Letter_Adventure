@@ -1,6 +1,6 @@
 import { useDispatch } from '../game/state';
 import { WORLDS } from '../data/worlds';
-import { ArabicSpan, FormStrip } from '../components/Arabic';
+import { ArabicSpan, FormStrip, RichText } from '../components/Arabic';
 import { Banner, Button, Panel, useT } from '../components/ui';
 import { positionLabelKey } from '../game/questions';
 import { availablePositions } from '../game/arabic';
@@ -54,9 +54,11 @@ export function HowToScreen() {
             />
             <p className="howto__ideatext">{t('disc.fourForms', { name: t.lang === 'ar' ? 'باء' : 'Baa' })}</p>
             <p className="howto__ideanote">
-              {t.lang === 'ar'
-                ? 'وليس كل حرف له أربعة أشكال: مثل ا د ذ ر ز و — لها شكلان فقط.'
-                : 'Not every letter has four shapes: ا د ذ ر ز و have only two.'}
+              <RichText>
+                {t.lang === 'ar'
+                  ? 'وليس كل حرف له أربعة أشكال: مثل ا د ذ ر ز و — لها شكلان فقط.'
+                  : 'Not every letter has four shapes: ا د ذ ر ز و have only two.'}
+              </RichText>
             </p>
             <FormStrip
               char="د"

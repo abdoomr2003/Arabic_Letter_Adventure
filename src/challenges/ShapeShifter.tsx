@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch, useGame, useCurrentLevel } from '../game/state';
-import { playSfx, pronounce } from '../game/audio';
-import { ArabicSpan, ArabicWord, LetterForm, FormStrip } from '../components/Arabic';
-import { Button, Feedback, useT } from '../components/ui';
+import { useDispatch, useCurrentLevel } from '../game/state';
+import { canPronounce, onVoicesReady, playSfx, pronounce } from '../game/audio';
+import { ArabicWord, LetterForm, FormStrip, RichText } from '../components/Arabic';
+import { Button, Feedback, useSupport, useT } from '../components/ui';
 import { ChallengeFrame, nameOf } from './kit';
 import { availablePositions, letterSpans, sameLetter, type Position } from '../game/arabic';
 import { positionLabelKey, shapeShiftSteps } from '../game/questions';
@@ -24,7 +24,7 @@ const SLOT_FOR: Record<Position, 'start' | 'middle' | 'end'> = {
 export function ShapeShifter({ letter }: { letter: string }) {
   const t = useT();
   const dispatch = useDispatch();
-  const { save } = useGame();
+  const { showTranslit, showMeaning } = useSupport();
   const level = useCurrentLevel();
   const tier = level?.tier ?? 'beginner';
 
@@ -40,7 +40,10 @@ export function ShapeShifter({ letter }: { letter: string }) {
   const [morphKey, setMorphKey] = useState(0);
   const [finale, setFinale] = useState(steps.length === 0);
   const [finaleStep, setFinaleStep] = useState(0);
+  const [speakable, setSpeakable] = useState(canPronounce());
   const started = useRef(performance.now());
+
+  useEffect(() => onVoicesReady(() => setSpeakable(canPronounce())), []);
 
   const step = steps[stepIndex];
   const info = letterByChar(letter);
@@ -122,7 +125,7 @@ export function ShapeShifter({ letter }: { letter: string }) {
                       .filter((x) => sameLetter(x.base, letter))
                       .map((x) => x.index)}
                   />
-                  <span className="shifter__exen">{s.example.word.en}</span>
+                  {showMeaning && <span className="shifter__exen">{s.example.word.en}</span>}
                 </div>
               ) : null,
             )}
@@ -172,18 +175,20 @@ export function ShapeShifter({ letter }: { letter: string }) {
             position={shown}
             className="hero-letter shifter__glyph"
           />
-          {info && (
+        </div>
+        <p className="shifter__now">
+          <span>{t(positionLabelKey(shown))}</span>
+          {info && speakable && (
             <button
               type="button"
               className="shifter__speak"
-              onClick={() => { if (!pronounce(info.nameAr)) playSfx('click'); }}
-              aria-label={t('btn.listen')}
+              onClick={() => pronounce(info.nameAr)}
+              aria-label={`${t('btn.listen')}: ${nameOf(t, letter)}`}
             >
               🔊
             </button>
           )}
-        </div>
-        <p className="shifter__now">{t(positionLabelKey(shown))}</p>
+        </p>
       </div>
 
       {/* The three places in a word the letter can be dropped into. */}
@@ -223,19 +228,23 @@ export function ShapeShifter({ letter }: { letter: string }) {
               .filter((x) => sameLetter(x.base, letter))
               .map((x) => x.index)}
           />
-          <span className="shifter__proofen">
-            {save.settings.transliteration && <i>{step.example.word.translit} · </i>}
-            {step.example.word.en}
-          </span>
+          {(showTranslit || showMeaning) && (
+            <span className="shifter__proofen">
+              {showTranslit && <i>{step.example.word.translit}</i>}
+              {showTranslit && showMeaning && ' · '}
+              {showMeaning && step.example.word.en}
+            </span>
+          )}
         </div>
       )}
 
       {info && (
         <p className="shifter__hint">
-          <ArabicSpan>{letter}</ArabicSpan>{' '}
-          {positions.length > 2
-            ? t('disc.fourForms', { name: nameOf(t, letter) })
-            : t('disc.twoForms', { name: nameOf(t, letter) })}
+          <RichText>
+            {positions.length > 2
+              ? t('disc.fourForms', { name: nameOf(t, letter) })
+              : t('disc.twoForms', { name: nameOf(t, letter) })}
+          </RichText>
         </p>
       )}
     </ChallengeFrame>

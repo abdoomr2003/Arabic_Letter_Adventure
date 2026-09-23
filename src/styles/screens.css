@@ -306,6 +306,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Centre the challenge in the stage, but never clip it off the top when it is
+     taller than the viewport. */
+  justify-content: center;
+  justify-content: safe center;
   gap: clamp(10px, 2vh, 18px);
   width: 100%;
   max-width: 900px;
@@ -489,7 +493,7 @@
   line-height: 1.1;
   padding-inline: 0.12em;
 }
-.discovery__speak, .discovery__wordspeak, .shifter__speak {
+.discovery__speak, .discovery__wordspeak {
   position: absolute;
   inset-block-end: 6px;
   inset-inline-end: -6px;
@@ -581,12 +585,31 @@
 .shifter__letter { position: relative; animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 .shifter__glyph {
   display: block;
-  font-size: clamp(4.5rem, 20vw, 9rem);
+  font-size: clamp(5rem, 26vw, 9rem);
   color: var(--gold-300);
   text-shadow: 0 5px 0 var(--gold-700), 0 10px 34px rgba(0, 0, 0, 0.6);
   padding-inline: 0.14em;
 }
-.shifter__now { font-family: var(--font-display); font-weight: 800; color: var(--cyan-400); }
+.shifter__now {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--cyan-400);
+}
+/* Sits beside the label, never over the letter — in either direction. */
+.shifter__speak {
+  position: static;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--blue-400), var(--blue-500));
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 3px 0 var(--blue-600);
+  font-size: 1rem;
+  flex: none;
+}
 
 .shifter__slots {
   display: grid;
@@ -604,8 +627,9 @@
   min-height: 104px;
   padding: 12px 8px;
   border-radius: var(--radius);
-  background: rgba(10, 16, 56, 0.6);
-  border: 3px dashed rgba(160, 190, 255, 0.5);
+  background: linear-gradient(180deg, rgba(53, 71, 159, 0.5), rgba(10, 16, 56, 0.66));
+  border: 3px dashed rgba(180, 210, 255, 0.65);
+  box-shadow: inset 0 0 22px rgba(120, 190, 255, 0.14);
   transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
 }
 .shifter__slot:hover:not(:disabled) { transform: translateY(-3px); border-color: var(--cyan-400); }
@@ -1138,4 +1162,47 @@
   .discovery__glyph { font-size: clamp(3.5rem, 16vh, 6rem); }
   .shifter__glyph { font-size: clamp(3rem, 22vh, 6rem); }
   .home__hero { display: none; }
+}
+
+/* ------------------------------------------- world guardian + duel staging */
+.world__scene { position: relative; }
+.world__guardian {
+  position: absolute;
+  inset-block-end: 74px;
+  inset-inline-end: 10px;
+  width: clamp(72px, 22%, 130px);
+  border-radius: 18px;
+  border: 3px solid var(--gold-400);
+  box-shadow: var(--shadow-deep), var(--glow-gold);
+  object-fit: cover;
+  aspect-ratio: 1 / 1.1;
+}
+
+.duel { position: relative; }
+.duel__bg { border-radius: var(--radius-lg); z-index: -1; }
+.rush { position: relative; }
+.rush__bg { z-index: -1; opacity: 0.55; }
+
+.duel__vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 26px);
+  margin-bottom: 8px;
+}
+.duel__portrait {
+  width: clamp(54px, 13vw, 84px);
+  height: clamp(54px, 13vw, 84px);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--gold-400);
+  box-shadow: var(--shadow-lift);
+}
+.duel__portrait--rival { border-color: var(--red-400); }
+.duel__vslabel {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.1rem, 3.4vw, 1.7rem);
+  color: var(--gold-300);
+  text-shadow: 0 0 18px rgba(255, 212, 92, 0.7), 0 2px 0 rgba(0, 0, 0, 0.5);
 }

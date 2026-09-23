@@ -313,6 +313,8 @@ async function main() {
     const afterDuel = await snapshot(page);
     check('duel resolved into a real outcome',
       ['duel-won', 'rush-intro', 'fail', 'result'].includes(afterDuel.kind), afterDuel.kind);
+    check('the duel is winnable when played correctly',
+      afterDuel.kind !== 'fail', afterDuel.kind);
 
     if (afterDuel.kind === 'duel-won') { await step(page, lang); await page.waitForTimeout(500); }
 

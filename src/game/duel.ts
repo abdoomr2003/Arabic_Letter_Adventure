@@ -12,7 +12,7 @@
  * spot, which is the teaching moment.
  */
 import { LETTERS, letterByChar, type Letter } from '../data/letters';
-import { WORDS, wordsWithLetter } from '../data/words';
+import { WORDS } from '../data/words';
 import { findLetter } from './arabic';
 import { makeRng, sample, shuffle, type Rng } from './rng';
 
@@ -64,7 +64,7 @@ function splits(clue: Clue, candidates: string[]): boolean {
 }
 
 /** How evenly a clue divides the candidates — 0 is a perfect split. */
-function imbalance(clue: Clue, candidates: string[]): number {
+export function imbalance(clue: Clue, candidates: string[]): number {
   let yes = 0;
   for (const c of candidates) {
     const l = letterByChar(c);
@@ -122,26 +122,41 @@ export function makeRival(candidates: string[], seed: number): RivalState {
   return { candidates: candidates.slice(), used: [], secret };
 }
 
-/** The rival asks the question that best halves its candidate list. */
-export function rivalChooseClue(rival: RivalState, deck: Clue[]): Clue | null {
-  const fresh = deck.filter((c) => !rival.used.includes(c.id) && splits(c, rival.candidates));
-  if (!fresh.length) return null;
-  return fresh.reduce((best, c) =>
-    imbalance(c, rival.candidates) < imbalance(best, rival.candidates) ? c : best,
-  );
+/**
+ * How sharply the rival plays.  A rival that always asks the perfect question
+ * beats a child every time, so only the last worlds get one: the early rival asks
+ * a reasonable question rather than the best one, which leaves the learner the
+ * time to reason their own way to the answer.
+ */
+export type RivalSkill = 'easy' | 'fair' | 'sharp';
+
+export function skillForTier(tier: 'beginner' | 'intermediate' | 'advanced'): RivalSkill {
+  return tier === 'beginner' ? 'easy' : tier === 'intermediate' ? 'fair' : 'sharp';
+}
+
+/** The clues still worth asking about a candidate set, best splitter first. */
+export function rankClues(deck: Clue[], candidates: string[], used: string[] = []): Clue[] {
+  return deck
+    .filter((c) => !used.includes(c.id) && splits(c, candidates))
+    .sort((a, b) => imbalance(a, candidates) - imbalance(b, candidates));
+}
+
+/** The rival's question for this turn, chosen according to its skill. */
+export function rivalChooseClue(rival: RivalState, deck: Clue[], skill: RivalSkill = 'sharp'): Clue | null {
+  const ranked = rankClues(deck, rival.candidates, rival.used);
+  if (!ranked.length) return null;
+  if (skill === 'sharp') return ranked[0];
+  const rng = makeRng(rival.used.length * 7919 + rival.candidates.length + 1);
+  if (skill === 'fair') return ranked[Math.floor(rng() * Math.ceil(ranked.length / 2))] ?? ranked[0];
+  return ranked[Math.floor(rng() * ranked.length)] ?? ranked[0];
 }
 
 /** Does the rival commit to a guess this turn? */
-export function rivalShouldGuess(rival: RivalState, deck: Clue[]): boolean {
+export function rivalShouldGuess(rival: RivalState, deck: Clue[], skill: RivalSkill = 'sharp'): boolean {
   if (rival.candidates.length <= 1) return true;
-  return !rivalChooseClue(rival, deck);
+  return !rivalChooseClue(rival, deck, skill);
 }
 
 export function rivalGuess(rival: RivalState, seed: number): string {
   return shuffle(makeRng(seed), rival.candidates)[0] ?? LETTERS[0].char;
-}
-
-/** Example words used by the "is your letter in this word?" clue display. */
-export function exampleWordsFor(letter: string, n = 3) {
-  return wordsWithLetter(letter).slice(0, n).map((h) => h.word);
 }

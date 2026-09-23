@@ -403,3 +403,18 @@
 }
 .chip--gold { border-color: var(--gold-500); color: var(--gold-300); }
 .chip--cyan { border-color: var(--cyan-400); color: var(--cyan-400); }
+
+/* Arabic runs sitting inside English UI text: isolated from the bidi algorithm
+   and set in the Arabic face a size up, so the letter never reads as a Latin
+   lookalike and never reorders the words around it. */
+.inline-arabic {
+  font-family: var(--font-arabic);
+  font-size: 1.22em;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--gold-300);
+  padding-inline: 0.12em;
+  vertical-align: -0.06em;
+}
+.feedback .inline-arabic { color: #fff6d8; }
+.tile .inline-arabic, .howto__ideanote .inline-arabic { color: inherit; }

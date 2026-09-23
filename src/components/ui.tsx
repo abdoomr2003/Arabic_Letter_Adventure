@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { translate } from '../data/i18n';
+import { RichText } from './Arabic';
 import { useGame } from '../game/state';
 import { playSfx, unlockAudio } from '../game/audio';
 import type { Lang, Msg } from '../game/types';
@@ -16,6 +17,22 @@ export function useT() {
     t.msg = (m?: Msg) => (m ? translate(lang, m.key, m.vars) : '');
     return t;
   }, [lang]);
+}
+
+/**
+ * What support material to show beside Arabic words.
+ *
+ * Transliteration and English meanings exist for learners who do not read
+ * Arabic yet; in the Arabic interface the word carries itself, so they stay off.
+ * The Arabic script is never replaced by either of them.
+ */
+export function useSupport() {
+  const { save } = useGame();
+  const en = save.settings.lang === 'en';
+  return {
+    showTranslit: en && save.settings.transliteration,
+    showMeaning: en,
+  };
 }
 
 /* ---------------------------------------------------------------- buttons */
@@ -207,7 +224,7 @@ export function Feedback({
   return (
     <div className={`feedback ${good ? 'feedback--good' : 'feedback--bad'} anim-pop`} role="status" aria-live="polite">
       <span className="feedback__icon" aria-hidden="true">{icon ?? (good ? '✅' : '💡')}</span>
-      <span>{children}</span>
+      <span>{typeof children === 'string' ? <RichText>{children}</RichText> : children}</span>
     </div>
   );
 }
@@ -348,15 +365,5 @@ export function TimerChip({ left, total }: { left: number; total: number }) {
       <span>{String(Math.floor(secs / 60)).padStart(2, '0')}:{String(secs % 60).padStart(2, '0')}</span>
       <span className="sr-only">{secs} / {total}</span>
     </div>
-  );
-}
-
-/* ------------------------------------------------------------- score popup */
-
-export function ScorePop({ points, x, y }: { points: number; x: number; y: number }) {
-  return (
-    <span className="score-pop" style={{ left: x, top: y }} aria-hidden="true">
-      +{points}
-    </span>
   );
 }

@@ -1,5 +1,5 @@
 import {
-  analyzeWord, findLetter, normalizeLetter, slotOf, stripDiacritics, type Slot,
+  analyzeWord, normalizeLetter, slotOf, type Slot,
 } from '../game/arabic';
 
 export interface Word {
@@ -133,6 +133,7 @@ export const WORDS: Word[] = [
   { ar: 'عُشّ', translit: 'ushsh', en: 'nest', difficulty: 2, emoji: '🪺' },
   { ar: 'فِرَاش', translit: 'firaash', en: 'bedding', difficulty: 3, emoji: '🛌' },
   { ar: 'نَشِيط', translit: 'nasheet', en: 'active', difficulty: 3, emoji: '⚡' },
+  { ar: 'شَيْء', translit: 'shay', en: 'thing', difficulty: 2, emoji: '📦' },
 
   // ——— sad ———
   { ar: 'صَقْر', translit: 'saqr', en: 'falcon', difficulty: 2, emoji: '🦅' },
@@ -293,23 +294,4 @@ export function wordsWithForm(
   return wordsWithLetter(letter).filter(
     (h) => h.position === position && h.word.difficulty <= maxDifficulty,
   );
-}
-
-/** Words that do NOT contain the letter — used as distractors. */
-export function wordsWithoutLetter(letter: string, maxDifficulty = 3): Word[] {
-  return WORDS.filter(
-    (w) => w.difficulty <= maxDifficulty && findLetter(w.ar, letter).length === 0,
-  );
-}
-
-/** Look a word up by its unvowelled spelling (used by the free-typing challenge). */
-const BY_SKELETON = new Map<string, Word[]>();
-for (const w of WORDS) {
-  const k = stripDiacritics(w.ar);
-  const b = BY_SKELETON.get(k);
-  if (b) b.push(w);
-  else BY_SKELETON.set(k, [w]);
-}
-export function lookupWord(text: string): Word | undefined {
-  return BY_SKELETON.get(stripDiacritics(text.trim()))?.[0];
 }

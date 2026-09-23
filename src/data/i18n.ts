@@ -116,7 +116,7 @@ const AR: Record<string, Entry> = {
   // — boss —
   'boss.title': 'تحدي الحرف السري',
   'boss.step1': 'اختر حرفًا سرًا',
-  'boss.step1hint': 'اختر حرفًا من هذا العالم — سيحاول خصمك تخمينه!',
+  'boss.step1hint': 'اختر حرفًا واحفظه — سيحاول خصمك تخمينه!',
   'boss.yourSecret': 'حرفك السري',
   'boss.rivalTurn': 'دور الخصم',
   'boss.yourTurn': 'دورك',
@@ -323,7 +323,7 @@ const EN: Record<string, Entry> = {
 
   'boss.title': 'Secret Letter Challenge',
   'boss.step1': 'Choose a secret letter',
-  'boss.step1hint': 'Pick a letter from this world — your rival will try to guess it!',
+  'boss.step1hint': 'Pick one and remember it — your rival will try to guess it!',
   'boss.yourSecret': 'Your secret letter',
   'boss.rivalTurn': "Rival's turn",
   'boss.yourTurn': 'Your turn',

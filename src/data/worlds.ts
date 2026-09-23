@@ -18,6 +18,8 @@ export interface World {
   letters: string[];
   icon: string;
   art: string;
+  /** Optional character who rules this world, drawn on the world screen. */
+  guardian?: string;
   /** Accent colours used for this world's UI tint. */
   accent: string;
   accent2: string;
@@ -38,6 +40,7 @@ export const WORLDS: World[] = [
     letters: ['ا'],
     icon: '👑',
     art: 'world-alif',
+    guardian: 'char-king-alif',
     accent: '#6f8cff',
     accent2: '#c9a227',
     map: { x: 9, y: 70 },
@@ -68,7 +71,7 @@ export const WORLDS: World[] = [
     hintAr: 'بطن مستديرة تنزل تحت السطر، والنقطة تحدد الحرف.',
     hintEn: 'A round belly that dips below the line — the dot decides the letter.',
     letters: ['ج', 'ح', 'خ', 'ع', 'غ', 'ه'],
-    icon: '🫄',
+    icon: '🛖',
     art: 'world-bellies',
     accent: '#7ec87e',
     accent2: '#ffd166',

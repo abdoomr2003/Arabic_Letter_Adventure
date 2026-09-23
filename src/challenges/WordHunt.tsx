@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArabicWord } from '../components/Arabic';
-import { useT } from '../components/ui';
+import { useSupport, useT } from '../components/ui';
 import { ChallengeFrame, ResultBar, TargetBadge, useChallenge } from './kit';
 import { analyzeWord, letterSpans, sameLetter, slotOf } from '../game/arabic';
 import { positionLabelKey, slotLabelKey } from '../game/questions';
@@ -16,6 +16,7 @@ import type { Question } from '../game/types';
  */
 export function WordHunt({ question }: { question: Question }) {
   const t = useT();
+  const { showTranslit, showMeaning } = useSupport();
   const { result, submit, next } = useChallenge(question, { autoNextMs: 1400 });
   const [taps, setTaps] = useState<{ index: number; correct: boolean }[]>([]);
 
@@ -79,10 +80,12 @@ export function WordHunt({ question }: { question: Question }) {
           highlightTone="good"
           ariaLabel={`${word.ar} — ${word.en}`}
         />
-        <p className="hunt__meta">
-          <span className="hunt__translit">{word.translit}</span>
-          <span className="hunt__en">{word.en}</span>
-        </p>
+        {(showTranslit || showMeaning) && (
+          <p className="hunt__meta">
+            {showTranslit && <span className="hunt__translit">{word.translit}</span>}
+            {showMeaning && <span className="hunt__en">{word.en}</span>}
+          </p>
+        )}
       </div>
     </ChallengeFrame>
   );

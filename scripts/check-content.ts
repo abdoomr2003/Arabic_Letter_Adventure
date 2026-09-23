@@ -50,7 +50,26 @@ for (const l of LETTERS) {
   }
 }
 
-// 4. Every word must analyse without throwing and must contain only known letters.
+// 4. Known-good joining analyses — the rules must keep producing these.
+console.log('\nJoining analysis of reference words:');
+const CASES: [string, string][] = [
+  ['بَاب', 'ب:initial ا:final ب:isolated'],
+  ['كِتَاب', 'ك:initial ت:medial ا:final ب:isolated'],
+  ['مَكْتَب', 'م:initial ك:medial ت:medial ب:final'],
+  ['وَرْد', 'و:isolated ر:isolated د:isolated'],
+  ['ذِئْب', 'ذ:isolated ئ:initial ب:final'],
+  // A dual-joining letter before a non-joining one stays FINAL, not medial.
+  ['شَيْء', 'ش:initial ي:final ء:isolated'],
+  ['ضَوْء', 'ض:initial و:final ء:isolated'],
+  ['سَمَاء', 'س:initial م:medial ا:final ء:isolated'],
+];
+for (const [word, expected] of CASES) {
+  const got = analyzeWord(word).map((l) => `${l.base}:${l.position}`).join(' ');
+  if (got === expected) console.log(`  ✓ ${word} → ${got}`);
+  else warn(`${word} analysed as "${got}", expected "${expected}"`);
+}
+
+// 5. Every word must analyse without throwing and must contain only known letters.
 const known = new Set(LETTERS.map((x) => x.char).concat(['أ', 'إ', 'آ', 'ة', 'ى', 'ء', 'ئ', 'ؤ']));
 for (const w of WORDS) {
   for (const l of analyzeWord(w.ar)) {

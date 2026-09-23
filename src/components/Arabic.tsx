@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { letterSpans, sameLetter, shapeForm, type Position } from '../game/arabic';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { letterSpans, shapeForm, type Position } from '../game/arabic';
 import type { Word } from '../data/words';
 
 /**
@@ -203,32 +203,27 @@ export function FormStrip({
   );
 }
 
-/** Word list item used in discovery and results: the word, then support text. */
-export function WordExample({
-  word, targetLetter, showTranslit, size = 'clamp(1.7rem, 5.5vw, 2.6rem)',
-}: { word: Word; targetLetter?: string; showTranslit: boolean; size?: string }) {
-  const highlight = targetLetter
-    ? letterSpans(word.ar).filter((s) => sameLetter(s.base, targetLetter)).map((s) => s.index)
-    : [];
-  return (
-    <div className="wordex">
-      {word.emoji && <span className="wordex__emoji" aria-hidden="true">{word.emoji}</span>}
-      <ArabicWord word={word} size={size} highlight={highlight} />
-      <div className="wordex__meta">
-        {showTranslit && <span className="wordex__translit">{word.translit}</span>}
-        <span className="wordex__en">{word.en}</span>
-      </div>
-    </div>
-  );
-}
+const ARABIC_RUN = /([؀-ۿݐ-ݿ‍ً-ْ]+)/g;
 
-/** Re-measure helper for screens that animate a word into view. */
-export function useDelayedMount(delay: number) {
-  const [on, setOn] = useState(delay === 0);
-  useEffect(() => {
-    if (delay === 0) return;
-    const t = window.setTimeout(() => setOn(true), delay);
-    return () => window.clearTimeout(t);
-  }, [delay]);
-  return on;
+/**
+ * Mixed Arabic/English text, done properly.
+ *
+ * A sentence like `Find the letter ب` puts an Arabic run inside an English one.
+ * Left as a plain string the bidi algorithm can reorder the neighbouring words,
+ * and the letter renders at body size in the UI font, where a bare ا is easy to
+ * mistake for a Latin "l".  Each Arabic run is therefore isolated with <bdi> and
+ * given the Arabic face at a slightly larger size, so the letter stays the thing
+ * the eye lands on.
+ */
+export function RichText({ children, className = '' }: { children: string; className?: string }) {
+  const parts = children.split(ARABIC_RUN);
+  return (
+    <span className={className}>
+      {parts.map((part, i) =>
+        i % 2 === 1
+          ? <bdi key={i} lang="ar" dir="rtl" className="inline-arabic">{part}</bdi>
+          : <span key={i}>{part}</span>,
+      )}
+    </span>
+  );
 }

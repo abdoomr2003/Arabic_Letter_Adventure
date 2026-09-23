@@ -38,6 +38,9 @@ export function WorldScreen() {
           {/* ——— the illustrated scene ——— */}
           <figure className="world__scene">
             <img src={`./art/${world.art}.jpg`} alt="" />
+            {world.guardian && (
+              <img className="world__guardian anim-bob" src={`./art/${world.guardian}.jpg`} alt="" />
+            )}
             <figcaption>
               <strong>{t.lang === 'ar' ? world.taglineAr : world.taglineEn}</strong>
               <span>{t.lang === 'ar' ? world.hintAr : world.hintEn}</span>

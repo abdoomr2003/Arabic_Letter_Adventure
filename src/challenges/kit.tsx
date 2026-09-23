@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { useDispatch, useGame } from '../game/state';
+import { useDispatch } from '../game/state';
 import { playSfx } from '../game/audio';
 import { letterByChar } from '../data/letters';
 import { positionLabelKey, slotLabelKey } from '../game/questions';
-import { LetterForm, ArabicSpan, ArabicWord } from '../components/Arabic';
-import { Button, Feedback, useT } from '../components/ui';
+import { LetterForm, ArabicSpan, ArabicWord, RichText } from '../components/Arabic';
+import { Button, Feedback, useSupport, useT } from '../components/ui';
 import type { Option, Question } from '../game/types';
 
 /* ------------------------------------------------------- answering plumbing */
@@ -196,8 +196,14 @@ export function ChallengeFrame({
   return (
     <div className="challenge">
       <header className="challenge__head">
-        <h2 className="challenge__prompt">{prompt}</h2>
-        {sub && <p className="challenge__sub">{sub}</p>}
+        <h2 className="challenge__prompt">
+          {typeof prompt === 'string' ? <RichText>{prompt}</RichText> : prompt}
+        </h2>
+        {sub && (
+          <p className="challenge__sub">
+            {typeof sub === 'string' ? <RichText>{sub}</RichText> : sub}
+          </p>
+        )}
       </header>
       {aside}
       <div className="challenge__body">{children}</div>
@@ -227,14 +233,14 @@ export function ResultBar({
 export function TargetBadge({ char }: { char: string }) {
   const t = useT();
   const l = letterByChar(char);
-  const { save } = useGame();
+  const { showTranslit } = useSupport();
   return (
     <div className="targetbadge">
       <ArabicSpan className="targetbadge__glyph">{char}</ArabicSpan>
       {l && (
         <span className="targetbadge__meta">
           <b>{t.lang === 'ar' ? l.nameAr : l.nameEn}</b>
-          {save.settings.transliteration && <span className="muted">{l.sound}</span>}
+          {showTranslit && <span className="muted">{l.sound}</span>}
         </span>
       )}
     </div>

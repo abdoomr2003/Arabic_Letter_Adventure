@@ -10,8 +10,8 @@ import type { Page } from 'playwright';
 import { translate } from '../src/data/i18n';
 import { LETTERS, letterByChar } from '../src/data/letters';
 import {
-  ZWJ, analyzeWord, normalizeLetter, sameLetter, slotOf, splitLetters, wordHasLetterAt,
-  type Position, type Slot,
+  ZWJ, analyzeWord, findLetter, normalizeLetter, sameLetter, slotOf, splitLetters,
+  wordHasLetterAt, type Position, type Slot,
 } from '../src/game/arabic';
 import { clueDeck, duelCandidates, answerFor } from '../src/game/duel';
 import { makeRng } from '../src/game/rng';
@@ -117,6 +117,26 @@ const positionLabels = (lang: Lang): Record<string, Position> => ({
   [translate(lang, 'pos.final')]: 'final',
 });
 
+/**
+ * Click the button in a challenge's footer, if there is an enabled one right now.
+ * The game advances on its own after a correct answer, so by the time we look the
+ * footer may already belong to the next challenge — never block waiting for it.
+ */
+async function clickFoot(page: Page, match?: RegExp): Promise<boolean> {
+  const loc = match
+    ? page.locator('.challenge__foot .btn', { hasText: match })
+    : page.locator('.challenge__foot .btn');
+  try {
+    if (await loc.count() === 0) return false;
+    const first = loc.first();
+    if (!(await first.isEnabled())) return false;
+    await first.click({ timeout: 2500 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export interface SolveResult { acted: boolean; intendedCorrect: boolean; note?: string }
 
 /**
@@ -152,8 +172,7 @@ export async function step(
       if (await slots.count() <= idx) return { acted: false, intendedCorrect: false };
       await slots.nth(idx).click();
       await page.waitForTimeout(400);
-      const next = page.locator('.challenge__foot .btn');
-      if (await next.count()) await next.first().click();
+      await clickFoot(page);
       await page.waitForTimeout(350);
       return { acted: true, intendedCorrect: !wrong, note: `shifter → ${want}` };
     }
@@ -167,14 +186,14 @@ export async function step(
         ? tiles.find((t) => !t.disabled && !sameLetter(strip(t.text), target))?.i
         : mine[0]?.i;
       if (pickIdx === undefined) {
-        const done = page.locator('.challenge__foot .btn');
-        if (await done.count()) { await done.first().click(); await page.waitForTimeout(300); return { acted: true, intendedCorrect: true }; }
+        const moved = await clickFoot(page);
+        if (moved) { await page.waitForTimeout(300); return { acted: true, intendedCorrect: true }; }
         return { acted: false, intendedCorrect: false };
       }
       await page.locator('.optgrid--dense .tile').nth(pickIdx).click();
       await page.waitForTimeout(280);
-      const done = page.locator('.challenge__foot .btn');
-      if (await done.count()) { await done.first().click(); await page.waitForTimeout(350); }
+      await clickFoot(page);
+      await page.waitForTimeout(350);
       return { acted: true, intendedCorrect: !wrong, note: 'shape match' };
     }
 
@@ -189,8 +208,8 @@ export async function step(
       if (!chosen) return { acted: false, intendedCorrect: false };
       await page.locator('.aword__cell--tap').nth(chosen.i).click();
       await page.waitForTimeout(850);
-      const next = page.locator('.challenge__foot .btn');
-      if (await next.count()) { await next.first().click(); await page.waitForTimeout(500); }
+      await clickFoot(page);
+      await page.waitForTimeout(600);
       return { acted: true, intendedCorrect: !wrong, note: 'word hunt' };
     }
 
@@ -209,11 +228,19 @@ export async function step(
         await page.locator('.build__pieces .tile').nth(hit.i).click();
         await page.waitForTimeout(110);
       }
-      const confirm = page.locator('.challenge__foot .btn').first();
-      if (await confirm.count()) await confirm.click();
+      // If anything went unplaced, fill the rest so the round can still resolve.
+      let left = await page.locator('.build__pieces .tile:not([disabled])').count();
+      while (left > 0) {
+        await page.locator('.build__pieces .tile:not([disabled])').first().click();
+        await page.waitForTimeout(90);
+        const now = await page.locator('.build__pieces .tile:not([disabled])').count();
+        if (now === left) break;
+        left = now;
+      }
+      await clickFoot(page);
       await page.waitForTimeout(900);
-      const next = page.locator('.challenge__foot .btn');
-      if (await next.count()) { await next.first().click(); await page.waitForTimeout(500); }
+      await clickFoot(page);
+      await page.waitForTimeout(600);
       return { acted: true, intendedCorrect: !wrong, note: `build ${word}` };
     }
 
@@ -252,8 +279,8 @@ export async function step(
 
       await page.locator('.optgrid .tile').nth(pickIdx).click();
       await page.waitForTimeout(900);
-      const next = page.locator('.challenge__foot .btn');
-      if (await next.count()) { await next.first().click(); await page.waitForTimeout(450); }
+      await clickFoot(page);
+      await page.waitForTimeout(500);
       return { acted: true, intendedCorrect: !wrong && correctIdx !== undefined, note: snap.prompt.slice(0, 40) };
     }
 
@@ -376,6 +403,12 @@ export async function step(
 function truthFor(questionText: string, secret: string, lang: Lang): boolean {
   const l = letterByChar(secret);
   if (!l) return false;
+
+  // "Is your letter in the word “X”?" — the word is right there in the question,
+  // so answer it the way a reader would: look for the letter inside the word.
+  const inWord = questionText.match(/[“"«]([^”"»]+)[”"»]/);
+  if (inWord) return findLetter(inWord[1], secret).length > 0;
+
   const deck = clueDeck(LETTERS.map((x) => x.char), makeRng(1));
   const match = deck.find((c) => translate(lang, c.msgKey, c.vars).trim() === questionText.trim());
   if (match) return answerFor(match, secret);

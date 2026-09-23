@@ -61,7 +61,6 @@ export type Action =
   | { type: 'nextQuestion' }
   | { type: 'phaseDone' }
   | { type: 'wordDone' }
-  | { type: 'addCoins'; n: number }
   | { type: 'finishLevel' }
   | { type: 'loseLevel' }
   | { type: 'abandonLevel' }
@@ -173,12 +172,6 @@ export function reducer(state: GameState, action: Action): GameState {
       const s = state.session;
       if (!s) return state;
       return { ...state, session: { ...s, wordsDone: s.wordsDone + 1 } };
-    }
-
-    case 'addCoins': {
-      const s = state.session;
-      if (!s) return state;
-      return { ...state, session: { ...s, coins: s.coins + action.n } };
     }
 
     case 'nextQuestion': {
