@@ -2,8 +2,7 @@ import { useDispatch } from '../game/state';
 import { WORLDS } from '../data/worlds';
 import { ArabicSpan, FormStrip, RichText } from '../components/Arabic';
 import { Banner, Button, Panel, useT } from '../components/ui';
-import { positionLabelKey } from '../game/questions';
-import { availablePositions } from '../game/arabic';
+import { formPlan, stepLabelKey } from '../game/questions';
 
 /**
  * The rulebook page: the six steps of the Secret Letter Challenge and the seven
@@ -48,23 +47,23 @@ export function HowToScreen() {
             <h2 className="howto__h2">✨ {t('disc.sameLetter')}</h2>
             <FormStrip
               char="ب"
-              forms={availablePositions('ب')}
+              forms={formPlan('ب').map((p) => p.position)}
               size="clamp(2rem, 7vw, 3.2rem)"
-              labels={availablePositions('ب').map((p) => t(positionLabelKey(p)))}
+              labels={formPlan('ب').map((p) => t(stepLabelKey(p)))}
             />
             <p className="howto__ideatext">{t('disc.fourForms', { name: t.lang === 'ar' ? 'باء' : 'Baa' })}</p>
             <p className="howto__ideanote">
               <RichText>
                 {t.lang === 'ar'
-                  ? 'وليس كل حرف له أربعة أشكال: مثل ا د ذ ر ز و — لها شكلان فقط.'
-                  : 'Not every letter has four shapes: ا د ذ ر ز و have only two.'}
+                  ? 'وليس كل حرف له أربعة أشكال: ا د ذ ر ز و لها شكلان فقط لأنها لا تتصل بما بعدها — تأتي في أول الكلمة ووسطها وآخرها، وشكلها المتصل بما قبلها يُستعمل في الوسط والآخر.'
+                  : 'Not every letter has four shapes: ا د ذ ر ز و have only two, because they never join the letter after them — they still sit at the beginning, middle and end, using the joined shape in the middle and at the end.'}
               </RichText>
             </p>
             <FormStrip
               char="د"
-              forms={availablePositions('د')}
+              forms={formPlan('د').map((p) => p.position)}
               size="clamp(2rem, 7vw, 3.2rem)"
-              labels={availablePositions('د').map((p) => t(positionLabelKey(p)))}
+              labels={formPlan('د').map((p) => t(stepLabelKey(p)))}
             />
           </Panel>
 

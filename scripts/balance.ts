@@ -29,7 +29,7 @@ function seed(bossId: string) {
   }
   return JSON.stringify({
     version: 1,
-    settings: { lang: 'en', sound: false, music: false, reducedMotion: true, transliteration: true, highContrast: false },
+    settings: { lang: 'en', sound: false, reducedMotion: true, transliteration: true, highContrast: false },
     profile: { name: 'Balance', avatar: '🦊', createdAt: 1 },
     progress: { xp: 1, coins: 1, totalScore: 1, levels, mastery: {}, unlockedRewards: [], bestCombo: 1, wordsCompleted: 0, lastPlayed: 1 },
   });

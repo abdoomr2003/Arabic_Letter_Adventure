@@ -30,7 +30,7 @@ export function WorldScreen() {
         </Button>
         <Banner>{world.icon} {t.lang === 'ar' ? world.nameAr : world.nameEn}</Banner>
         <div className="hud__spacer" />
-        <Pill icon="🪙">{save.progress.coins}</Pill>
+        <Pill icon="💰">{save.progress.coins}</Pill>
       </header>
 
       <div className="scroll world__scroll">
@@ -89,10 +89,10 @@ export function WorldScreen() {
                     )}
 
                     {level.kind === 'letter' && forms.length > 1 && (
-                      <p className="lvl__forms" dir="ltr" aria-hidden="true">
+                      <p className="lvl__forms" dir="rtl" aria-hidden="true">
                         {forms.map((p, i) => (
                           <span key={p}>
-                            {i > 0 && <i className="lvl__arrow">→</i>}
+                            {i > 0 && <i className="lvl__arrow">←</i>}
                             <LetterForm char={letter} position={p} />
                           </span>
                         ))}

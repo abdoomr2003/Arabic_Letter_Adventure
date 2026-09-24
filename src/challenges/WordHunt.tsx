@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArabicWord } from '../components/Arabic';
 import { useSupport, useT } from '../components/ui';
 import { ChallengeFrame, ResultBar, TargetBadge, useChallenge } from './kit';
-import { analyzeWord, letterSpans, sameLetter, slotOf } from '../game/arabic';
+import { analyzeWord, letterSpans, sameLetter, shapeForm, slotOf } from '../game/arabic';
 import { positionLabelKey, slotLabelKey } from '../game/questions';
 import { letterByChar } from '../data/letters';
 import type { Question } from '../game/types';
@@ -33,27 +33,36 @@ export function WordHunt({ question }: { question: Question }) {
     .filter((s) => sameLetter(s.base, question.targetLetter))
     .map((s) => s.index);
 
+  // Every occurrence must be found: توت is only solved once both ت are tapped.
   const onTap = (index: number, base: string) => {
     if (result) return;
+    // A re-tap on an already-found letter must not count twice.
+    if (taps.some((x) => x.index === index && x.correct)) return;
     const correct = sameLetter(base, question.targetLetter);
-    setTaps([{ index, correct }]);
-    submit(correct, {
-      id: `w${index}`,
-      render: { kind: 'letter', char: base },
-      correct,
-      letter: base,
-    });
+    const nextTaps = [...taps, { index, correct }];
+    setTaps(nextTaps);
+    const option = { id: `w${index}`, render: { kind: 'letter', char: base } as const, correct, letter: base };
+    if (!correct) {
+      submit(false, option);
+    } else if (nextTaps.filter((x) => x.correct).length >= targets.length) {
+      submit(true, option);
+    }
   };
 
-  const hitPosition = result?.correct && taps[0]
-    ? analysed[taps[0].index]?.position
+  const found = taps.filter((x) => x.correct).length;
+  // The per-form note only makes sense for a single occurrence; for several, teachCorrect lists them all.
+  const soleTap = targets.length === 1 ? taps[0] : undefined;
+  const hitPosition = result?.correct && soleTap
+    ? analysed[soleTap.index]?.position
     : undefined;
-  const hitSlot = taps[0] ? slotOf(taps[0].index, analysed.length) : undefined;
+  const hitSlot = soleTap ? slotOf(soleTap.index, analysed.length) : undefined;
 
   return (
     <ChallengeFrame
       prompt={t.msg(question.prompt)}
-      sub={t('disc.tapForms')}
+      sub={targets.length > 1
+        ? t('q.huntCount', { found, total: targets.length })
+        : t('disc.tapForms')}
       aside={<TargetBadge char={question.targetLetter} />}
       footer={
         <>
@@ -61,7 +70,7 @@ export function WordHunt({ question }: { question: Question }) {
           {result?.correct && hitPosition && hitSlot && (
             <p className="challenge__note">
               {t('fb.correctForm', {
-                form: '',
+                form: shapeForm(question.targetLetter, hitPosition),
                 name: (t.lang === 'ar'
                   ? letterByChar(question.targetLetter)?.nameAr
                   : letterByChar(question.targetLetter)?.nameEn) ?? question.targetLetter,

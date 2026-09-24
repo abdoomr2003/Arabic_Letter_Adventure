@@ -54,6 +54,8 @@ export interface Question {
   need: number;
   word?: Word;
   slot?: Slot;
+  /** Every slot the target letter occupies in `word` — more than one for words like توت. */
+  slots?: Slot[];
   position?: Position;
   difficulty: 1 | 2 | 3;
   /** Taught after a correct answer. */
@@ -110,7 +112,6 @@ export interface LetterMastery {
 export interface Settings {
   lang: Lang;
   sound: boolean;
-  music: boolean;
   reducedMotion: boolean;
   transliteration: boolean;
   highContrast: boolean;

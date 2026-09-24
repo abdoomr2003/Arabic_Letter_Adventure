@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useDispatch } from '../game/state';
 import { playSfx } from '../game/audio';
 import { letterByChar } from '../data/letters';
+import { shapeForm } from '../game/arabic';
 import { positionLabelKey, slotLabelKey } from '../game/questions';
 import { LetterForm, ArabicSpan, ArabicWord, RichText } from '../components/Arabic';
 import { Button, Feedback, useSupport, useT } from '../components/ui';
@@ -83,11 +84,15 @@ export function useExplain() {
       }
     }
     if (question.type === 'POSITION_DETECTION' && question.slot) {
-      return t('fb.wrongPos', { letter: question.targetLetter, where: t(slotLabelKey(question.slot)) });
+      const slots = question.slots ?? [question.slot];
+      return t('fb.wrongPos', {
+        letter: question.targetLetter,
+        where: slots.map((s) => t(slotLabelKey(s))).join(t.lang === 'ar' ? ' و' : ' and the '),
+      });
     }
     if (question.type === 'CONTEXTUAL_FORM' && question.position) {
       return t('fb.correctForm', {
-        form: '', name: nameOf(t, question.targetLetter), where: t(positionLabelKey(question.position)),
+        form: shapeForm(question.targetLetter, question.position), name: nameOf(t, question.targetLetter), where: t(positionLabelKey(question.position)),
       });
     }
     return t('fb.wrongGeneric');
@@ -130,14 +135,16 @@ export function OptionContent({ option, size }: { option: Option; size?: string 
 }
 
 export function OptionTile({
-  option, state, onPick, disabled, sublabel, size,
+  option, state, onPick, disabled, sublabel, size, pressed,
 }: {
   option: Option;
-  state?: 'correct' | 'wrong' | 'muted';
+  state?: 'correct' | 'wrong' | 'muted' | 'selected';
   onPick?: () => void;
   disabled?: boolean;
   sublabel?: string;
   size?: string;
+  /** Present only when the tile acts as a multi-answer toggle. */
+  pressed?: boolean;
 }) {
   return (
     <button
@@ -145,6 +152,7 @@ export function OptionTile({
       className={['tile', state ? `tile--${state}` : '', disabled ? 'tile--done' : ''].filter(Boolean).join(' ')}
       onClick={onPick}
       disabled={disabled}
+      aria-pressed={pressed}
     >
       {state === 'correct' && <span className="tile__mark" aria-hidden="true">✓</span>}
       {state === 'wrong' && <span className="tile__mark" aria-hidden="true">✕</span>}
@@ -155,7 +163,7 @@ export function OptionTile({
 }
 
 export function OptionGrid({
-  options, result, onPick, columns, sublabelFor, size,
+  options, result, onPick, columns, sublabelFor, size, selected,
 }: {
   options: Option[];
   result: Answered | null;
@@ -163,6 +171,8 @@ export function OptionGrid({
   columns?: number;
   sublabelFor?: (o: Option) => string | undefined;
   size?: string;
+  /** Multi-answer mode: the options toggled on so far. */
+  selected?: ReadonlySet<string>;
 }) {
   return (
     <div
@@ -170,17 +180,21 @@ export function OptionGrid({
       style={columns ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` } : undefined}
     >
       {options.map((o) => {
-        let state: 'correct' | 'wrong' | 'muted' | undefined;
+        let state: 'correct' | 'wrong' | 'muted' | 'selected' | undefined;
+        const picked = selected ? selected.has(o.id) : result?.option?.id === o.id;
         if (result) {
           if (o.correct) state = 'correct';
-          else if (result.option?.id === o.id) state = 'wrong';
+          else if (picked) state = 'wrong';
           else state = 'muted';
+        } else if (picked) {
+          state = 'selected';
         }
         return (
           <OptionTile
             key={o.id}
             option={o}
             state={state}
+            pressed={selected ? selected.has(o.id) : undefined}
             size={size}
             sublabel={sublabelFor?.(o)}
             disabled={!!result}

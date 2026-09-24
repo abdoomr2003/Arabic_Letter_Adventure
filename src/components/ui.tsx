@@ -146,6 +146,16 @@ export function Hearts({ lives, max }: { lives: number; max: number }) {
   );
 }
 
+/**
+ * The player's avatar, drawn the same way everywhere: isolated from the
+ * surrounding Arabic/English run (<bdi>) and in the colour-emoji face, so it
+ * never reorders or changes glyph depending on the screen it sits on.
+ */
+export function Avatar({ className = '' }: { className?: string }) {
+  const { save } = useGame();
+  return <bdi className={`emoji ${className}`} aria-hidden="true">{save.profile.avatar}</bdi>;
+}
+
 export function Pill({
   icon, children, label, tone = 'gold',
 }: { icon?: ReactNode; children: ReactNode; label?: string; tone?: 'gold' | 'plain' }) {

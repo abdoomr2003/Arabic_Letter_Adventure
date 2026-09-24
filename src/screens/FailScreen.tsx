@@ -3,7 +3,7 @@ import { useCurrentLevel, useDispatch, useGame } from '../game/state';
 import { letterByChar } from '../data/letters';
 import { availablePositions } from '../game/arabic';
 import { playSfx } from '../game/audio';
-import { positionLabelKey } from '../game/questions';
+import { formPlan, stepLabelKey } from '../game/questions';
 import { FormStrip } from '../components/Arabic';
 import { Button, Panel, useT } from '../components/ui';
 
@@ -46,9 +46,9 @@ export function FailScreen() {
             <p className="tiny dim">{t('disc.sameLetter')}</p>
             <FormStrip
               char={letter}
-              forms={forms}
+              forms={formPlan(letter).map((p) => p.position)}
               size="clamp(1.5rem, 5vw, 2.2rem)"
-              labels={forms.map((p) => t(positionLabelKey(p)))}
+              labels={formPlan(letter).map((p) => t(stepLabelKey(p)))}
             />
           </Panel>
         )}

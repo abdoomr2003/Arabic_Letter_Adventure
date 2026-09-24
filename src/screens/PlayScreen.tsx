@@ -60,7 +60,7 @@ export function PlayScreen() {
         <div className="hud__spacer" />
         <Combo multiplier={comboMultiplier(session.streak)} />
         <Pill icon="🏆" label={t('hud.score')}>{session.score.toLocaleString()}</Pill>
-        <Pill icon="🪙" label={t('hud.coins')}>{save.progress.coins + session.coins}</Pill>
+        <Pill icon="💰" label={t('hud.coins')}>{save.progress.coins + session.coins}</Pill>
         <Hearts lives={session.lives} max={MAX_LIVES} />
         <IconButton label={t('btn.settings')} onClick={() => dispatch({ type: 'toggleSettings', open: true })}>⚙️</IconButton>
       </header>

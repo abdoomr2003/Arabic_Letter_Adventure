@@ -10,15 +10,17 @@ const VERSION = 1;
 export const DEFAULT_SETTINGS: Settings = {
   lang: 'ar',
   sound: true,
-  music: false,
   reducedMotion: false,
   transliteration: true,
   highContrast: false,
 };
 
+/** Single-codepoint emojis only — ZWJ sequences split into two icons on older systems. */
+export const AVATARS = ['🚀', '🧙', '🦸', '🧝', '🐱', '🦉', '🐼', '🦊'] as const;
+
 export const DEFAULT_PROFILE: Profile = {
   name: '',
-  avatar: '🧑‍🚀',
+  avatar: AVATARS[0],
   createdAt: Date.now(),
 };
 
@@ -64,10 +66,13 @@ export function load(): SaveFile {
     const parsed = JSON.parse(raw) as Partial<SaveFile>;
     if (!parsed || typeof parsed !== 'object') return defaultSave();
     const base = defaultSave();
+    const profile = { ...base.profile, ...(parsed.profile ?? {}) };
+    // Old saves may hold a retired avatar (e.g. 🧑‍🚀); fall back to the default.
+    if (!(AVATARS as readonly string[]).includes(profile.avatar)) profile.avatar = base.profile.avatar;
     return {
       version: VERSION,
       settings: { ...base.settings, ...(parsed.settings ?? {}) },
-      profile: { ...base.profile, ...(parsed.profile ?? {}) },
+      profile,
       progress: { ...base.progress, ...(parsed.progress ?? {}) },
     };
   } catch {
