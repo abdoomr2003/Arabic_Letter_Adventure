@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArabicWord } from '../components/Arabic';
 import { useSupport, useT } from '../components/ui';
 import { ChallengeFrame, ResultBar, TargetBadge, useChallenge } from './kit';
-import { analyzeWord, letterSpans, sameLetter, slotOf } from '../game/arabic';
+import { analyzeWord, letterSpans, sameLetter, shapeForm, slotOf } from '../game/arabic';
 import { positionLabelKey, slotLabelKey } from '../game/questions';
 import { letterByChar } from '../data/letters';
 import type { Question } from '../game/types';
@@ -68,7 +68,7 @@ export function WordHunt({ question }: { question: Question }) {
           {result?.correct && hitPosition && hitSlot && (
             <p className="challenge__note">
               {t('fb.correctForm', {
-                form: '',
+                form: shapeForm(question.targetLetter, hitPosition),
                 name: (t.lang === 'ar'
                   ? letterByChar(question.targetLetter)?.nameAr
                   : letterByChar(question.targetLetter)?.nameEn) ?? question.targetLetter,

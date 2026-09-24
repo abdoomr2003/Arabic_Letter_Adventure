@@ -69,7 +69,8 @@ const AR: Record<string, Entry> = {
   'disc.formsCount': (v) => (v.n === 2 ? 'شكلان' : `${v.n} أشكال`),
   'disc.sameLetter': 'كلها نفس الحرف!',
   'disc.oneForm': (v) => `${v.name} له شكل واحد فقط — لا يتصل بما بعده.`,
-  'disc.twoForms': (v) => `${v.name} له شكلان فقط: منفرد ومتصل بما قبله.`,
+  'disc.twoForms': (v) =>
+    `${v.name} يأتي في أول الكلمة ووسطها وآخرها، وله شكلان فقط: منفرد ${v.iso ?? ''} ومتصل بما قبله ${v.fin ?? ''} — ولا يتصل أبدًا بالحرف الذي بعده.`,
   'disc.fourForms': (v) => `${v.name} يتغيّر شكله حسب موقعه، لكنه يبقى نفس الحرف.`,
   'disc.inWords': 'وهذه أمثلة حقيقية',
   'disc.tapForms': 'المس الأشكال لترى التحوّل',
@@ -282,7 +283,8 @@ const EN: Record<string, Entry> = {
   'disc.formsCount': (v) => `${v.n} shapes`,
   'disc.sameLetter': "They're all the same letter!",
   'disc.oneForm': (v) => `${v.name} has only one shape — it never joins to what follows.`,
-  'disc.twoForms': (v) => `${v.name} has only two shapes: on its own, and joined to the letter before it.`,
+  'disc.twoForms': (v) =>
+    `${v.name} can be at the beginning, middle or end of a word, with just two shapes: on its own ${v.iso ?? ''} or joined to the letter before it ${v.fin ?? ''} — it never joins the letter after it.`,
   'disc.fourForms': (v) => `${v.name} changes shape depending on where it sits — but it is still the same letter.`,
   'disc.inWords': 'Here it is in real words',
   'disc.tapForms': 'Tap the shapes to watch it change',

@@ -177,11 +177,11 @@ export function FormStrip({
   labels?: string[];
 }) {
   return (
-    // Arabic is written right-to-left, so the chain starts at the right (ب) and
-    // the arrows point left — in both UI languages.
+    // Arabic is written right-to-left, so the chain always starts at the right (ب)
+    // and the arrows point left — in both UI languages.
     <ol className="formstrip" dir="rtl">
       {forms.map((p, i) => (
-        <li key={p} className="formstrip__item">
+        <li key={`${p}-${i}`} className="formstrip__item">
           {i > 0 && <span className="formstrip__arrow" aria-hidden="true">←</span>}
           {onPick ? (
             <button

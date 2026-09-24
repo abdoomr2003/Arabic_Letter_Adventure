@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useDispatch } from '../game/state';
 import { playSfx } from '../game/audio';
 import { letterByChar } from '../data/letters';
+import { shapeForm } from '../game/arabic';
 import { positionLabelKey, slotLabelKey } from '../game/questions';
 import { LetterForm, ArabicSpan, ArabicWord, RichText } from '../components/Arabic';
 import { Button, Feedback, useSupport, useT } from '../components/ui';
@@ -91,7 +92,7 @@ export function useExplain() {
     }
     if (question.type === 'CONTEXTUAL_FORM' && question.position) {
       return t('fb.correctForm', {
-        form: '', name: nameOf(t, question.targetLetter), where: t(positionLabelKey(question.position)),
+        form: shapeForm(question.targetLetter, question.position), name: nameOf(t, question.targetLetter), where: t(positionLabelKey(question.position)),
       });
     }
     return t('fb.wrongGeneric');

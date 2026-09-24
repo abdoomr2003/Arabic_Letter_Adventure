@@ -34,9 +34,10 @@ export const WORDS: Word[] = [
   { ar: 'جَبَل', translit: 'jabal', en: 'mountain', difficulty: 1, emoji: '⛰️' },
   { ar: 'اِسْم', translit: 'ism', en: 'name', difficulty: 2, emoji: '🏷️' },
   { ar: 'اِبْن', translit: 'ibn', en: 'son', difficulty: 2, emoji: '👦' },
-  { ar: 'عَصَا', translit: 'asaa', en: 'stick', difficulty: 2, emoji: '🏑' },
+  { ar: 'عَصَا', translit: 'asaa', en: 'stick', difficulty: 1, emoji: '🏑' },
   { ar: 'دُنْيَا', translit: 'dunyaa', en: 'world', difficulty: 3, emoji: '🌍' },
   { ar: 'سَمَا', translit: 'samaa', en: 'sky', difficulty: 2, emoji: '☁️' },
+  { ar: 'بَابَا', translit: 'baabaa', en: 'dad', difficulty: 1, emoji: '👨' },
 
   // ——— baa ———
   { ar: 'بَيْت', translit: 'bayt', en: 'house', difficulty: 1, emoji: '🏠' },

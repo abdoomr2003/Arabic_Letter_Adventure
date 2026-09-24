@@ -308,26 +308,63 @@ function qTimed(rng: Rng, target: string, tier: LevelDef['tier']): Question {
 
 export interface ShapeShiftStep {
   position: Position;
-  /** A real word in which the letter takes exactly this form. */
+  /** Where in the word this step puts the letter — absent for the isolated form. */
+  slot?: Slot;
+  /** A real word in which the letter takes exactly this form, in exactly this slot. */
   example?: WordHit;
 }
+
+/** Label for a step: "منفرد" for the isolated form, otherwise the place in the word. */
+export const stepLabelKey = (s: ShapeShiftStep) => (s.slot ? SLOT_KEY[s.slot] : POS_KEY[s.position]);
 
 /**
  * GAME 7 — the signature mechanic. Returns the ordered transformation steps.
  *
- * Each step gets a *different* word where possible, so the learner sees the letter
- * take each shape in its own context rather than staring at one word four times.
+ * Dual-joining letters: منفرد → أول → وسط → آخر, one shape each.
+ * Letters that never join the next letter (ا د ذ ر ز و) use the SAME joined shape
+ * in the middle and at the end, so they get both steps: أَسَد → بَاب → عَصَا.
+ * Each example puts the letter in the labelled place (never ـا of بَاب as "end"),
+ * and each step gets a *different* word where possible.
  */
+/**
+ * The shapes of a letter in the order a word is read, each tied to its place.
+ *   ب: منفرد ب ← أول بـ ← وسط ـبـ ← آخر ـب
+ *   ا: أول ا ← وسط ـا ← آخر ـا   (never joins the next letter, so the joined
+ *      shape ـا serves both the middle and the end — أَسَد، بَاب، عَصَا)
+ */
+export function formPlan(letter: string): { position: Position; slot?: Slot }[] {
+  switch (availablePositions(letter).length) {
+    case 4:
+      return [{ position: 'isolated' }, { position: 'initial', slot: 'start' }, { position: 'medial', slot: 'middle' }, { position: 'final', slot: 'end' }];
+    case 2:
+      return [{ position: 'isolated', slot: 'start' }, { position: 'final', slot: 'middle' }, { position: 'final', slot: 'end' }];
+    default:
+      return [{ position: 'isolated' }];
+  }
+}
+
 export function shapeShiftSteps(letter: string, tier: LevelDef['tier']): ShapeShiftStep[] {
   const used = new Set<string>();
-  return availablePositions(letter).map((position) => {
-    const easy = wordsWithForm(letter, position, maxDiff(tier));
-    const any = wordsWithForm(letter, position);
+  const plan = formPlan(letter);
+  const twoShapes = availablePositions(letter).length === 2;
+  // Words with the letter in the labelled place first. Two-shape letters must match
+  // exactly (that is the whole point of their middle/end steps); dual-joining ones
+  // may fall back to any word showing the shape.
+  const inPlace = (slot?: Slot) => (hits: WordHit[]) => {
+    if (!slot) return hits;
+    const exact = hits.filter((h) => h.slot === slot);
+    return twoShapes ? exact : [...exact, ...hits.filter((h) => h.slot !== slot)];
+  };
+  return plan.flatMap(({ position, slot }) => {
+    const easy = inPlace(slot)(wordsWithForm(letter, position, maxDiff(tier)));
+    const any = inPlace(slot)(wordsWithForm(letter, position));
     const fresh = easy.find((h) => !used.has(h.word.ar))
       ?? any.find((h) => !used.has(h.word.ar))
       ?? easy[0] ?? any[0];
+    // A "middle" step with no real word to prove it would teach nothing — drop it.
+    if (!fresh && twoShapes && slot === 'middle') return [];
     if (fresh) used.add(fresh.word.ar);
-    return { position, example: fresh };
+    return [{ position, slot, example: fresh }];
   });
 }
 
