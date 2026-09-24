@@ -36,6 +36,8 @@ export function WordHunt({ question }: { question: Question }) {
   // Every occurrence must be found: توت is only solved once both ت are tapped.
   const onTap = (index: number, base: string) => {
     if (result) return;
+    // A re-tap on an already-found letter must not count twice.
+    if (taps.some((x) => x.index === index && x.correct)) return;
     const correct = sameLetter(base, question.targetLetter);
     const nextTaps = [...taps, { index, correct }];
     setTaps(nextTaps);

@@ -135,7 +135,7 @@ export function OptionContent({ option, size }: { option: Option; size?: string 
 }
 
 export function OptionTile({
-  option, state, onPick, disabled, sublabel, size,
+  option, state, onPick, disabled, sublabel, size, pressed,
 }: {
   option: Option;
   state?: 'correct' | 'wrong' | 'muted' | 'selected';
@@ -143,6 +143,8 @@ export function OptionTile({
   disabled?: boolean;
   sublabel?: string;
   size?: string;
+  /** Present only when the tile acts as a multi-answer toggle. */
+  pressed?: boolean;
 }) {
   return (
     <button
@@ -150,7 +152,7 @@ export function OptionTile({
       className={['tile', state ? `tile--${state}` : '', disabled ? 'tile--done' : ''].filter(Boolean).join(' ')}
       onClick={onPick}
       disabled={disabled}
-      aria-pressed={state === 'selected' ? true : undefined}
+      aria-pressed={pressed}
     >
       {state === 'correct' && <span className="tile__mark" aria-hidden="true">✓</span>}
       {state === 'wrong' && <span className="tile__mark" aria-hidden="true">✕</span>}
@@ -192,6 +194,7 @@ export function OptionGrid({
             key={o.id}
             option={o}
             state={state}
+            pressed={selected ? selected.has(o.id) : undefined}
             size={size}
             sublabel={sublabelFor?.(o)}
             disabled={!!result}

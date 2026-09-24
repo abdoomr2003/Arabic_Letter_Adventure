@@ -48,7 +48,7 @@ export function Engine({
         case 'SHAPE_MATCH': return <ShapeMatch question={question} />;
         case 'WORD_HUNT': return <WordHunt question={question} />;
         case 'WORD_BUILD': return <WordBuild question={question} />;
-        default: return <Mcq question={question} />;
+        default: return <Mcq key={question.id} question={question} />;
       }
     }
   }
@@ -86,7 +86,7 @@ function TimedPhase({ phase, questionIndex }: { phase: BuiltPhase; questionIndex
           {questionIndex + 1}/{phase.questions.length}
         </span>
       </div>
-      {question && <Mcq question={question} fast />}
+      {question && <Mcq key={question.id} question={question} fast />}
     </div>
   );
 }

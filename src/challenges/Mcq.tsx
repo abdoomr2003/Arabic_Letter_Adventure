@@ -16,12 +16,8 @@ export function Mcq({ question, fast = false }: { question: Question; fast?: boo
   const t = useT();
   const { result, submit, next } = useChallenge(question, { autoNextMs: fast ? 700 : 1200 });
   const multi = question.need > 1;
+  // Fresh selection per question: the parent mounts Mcq with key={question.id}.
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
-  const [selectedFor, setSelectedFor] = useState(question.id);
-  if (selectedFor !== question.id) {
-    setSelectedFor(question.id);
-    setSelected(new Set());
-  }
 
   const toggle = (o: Option) => {
     const nextSet = new Set(selected);
