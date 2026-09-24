@@ -13,7 +13,8 @@
     "playtest": "tsx scripts/playtest.ts",
     "deeptest": "tsx scripts/deeptest.ts",
     "sweep": "tsx scripts/sweep.ts",
-    "balance": "tsx scripts/balance.ts"
+    "balance": "tsx scripts/balance.ts",
+    "screenshots": "tsx scripts/screenshots.ts"
   },
   "dependencies": {
     "react": "^18.3.1",

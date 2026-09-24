@@ -13,18 +13,19 @@ core of the gameplay.
 
 ## Screens
 
-Every image below is a real frame captured by the automated playthrough
-(`npm run playtest -- --shots` and `npm run sweep`) — the game as it actually runs,
+Every image below is a real frame of the game being played by the automated solver
+(`npm run screenshots`, with `npm run dev` running) — the game as it actually runs,
 not a mockup.
 
 ### The signature moment
 
-The letter is the hero of the screen; its shapes are revealed one at a time, and each
-one lands in a real word where the letter genuinely takes that form.
+The letter is the hero of the screen; its shapes are revealed one at a time, read
+right to left like Arabic itself, and each one lands in a real word where the letter
+genuinely takes that form and sits in that place.
 
-| ب — four shapes | ا — only two, and it says why |
+| ب — four shapes | ا — two shapes, at the beginning, middle and end |
 | --- | --- |
-| ![Letter discovery for baa](docs/screenshots/06-discovery-baa.jpg) | ![Letter discovery for alif](docs/screenshots/07-discovery-alif.jpg) |
+| ![Letter discovery for baa](docs/screenshots/06-discovery-baa.jpg) | ![Letter discovery for alif: asad, baab, asaa](docs/screenshots/07-discovery-alif.jpg) |
 
 Shape Shifter puts the transformation under the learner's hand — move the letter to
 the beginning, middle or end and watch it change:
@@ -43,9 +44,9 @@ the beginning, middle or end and watch it change:
 | --- | --- |
 | ![World map with locked worlds](docs/screenshots/03-world-map.jpg) | ![World map showing progress](docs/screenshots/04-world-map-progress.jpg) |
 
-| Inside a world | A challenge |
+| Inside a world | A letter in two places — pick them all |
 | --- | --- |
-| ![World level list](docs/screenshots/05-world-levels.jpg) | ![Which shape belongs to jeem](docs/screenshots/10-challenge.jpg) |
+| ![World level list](docs/screenshots/05-world-levels.jpg) | ![Where is taa in toot: beginning and end](docs/screenshots/10-challenge.jpg) |
 
 ### The boss: Secret Letter Challenge
 
@@ -104,9 +105,12 @@ npm run playtest        # plays the game in a real browser (needs `npm run dev`)
 npm run deeptest        # plays the intermediate/advanced levels and the boss
 npm run balance         # measures how often each boss duel is actually winnable
 npm run sweep           # captures every screen in both languages at 3 viewports
+npm run screenshots     # regenerates the README gallery in docs/screenshots/
 ```
 
 `npm run playtest -- --shots --shotdir /tmp/shots` writes screenshots as it plays.
+`npm run screenshots` uses Playwright's bundled Chromium (`npx playwright install
+chromium`); set `PW_CHANNEL=chrome` to use an installed Google Chrome instead.
 
 No backend, no accounts, no network calls at runtime. Fonts and artwork are bundled.
 
@@ -291,6 +295,7 @@ scripts/
   solver.ts          plays the game through the DOM using the game's own Arabic rules
   playtest.ts        full playthrough in a real browser
   deeptest.ts        intermediate / advanced / boss playthrough
+  screenshots.ts     regenerates the README gallery
 ```
 
 Adding a letter is a data change: put it in `data/letters.ts`, add it to a world's

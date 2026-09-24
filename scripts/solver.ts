@@ -202,12 +202,16 @@ export async function step(
       if (!target) return { acted: false, intendedCorrect: false };
       const cells = await page.$$eval('.aword__cell--tap', (els) =>
         els.map((el, i) => ({ i, label: el.getAttribute('aria-label') ?? '', disabled: (el as HTMLButtonElement).disabled })));
-      const good = cells.find((c) => !c.disabled && sameLetter(c.label, target));
+      // Every occurrence must be tapped (توت has two ت) before the round resolves.
+      const goods = cells.filter((c) => !c.disabled && sameLetter(c.label, target));
       const bad = cells.find((c) => !c.disabled && !sameLetter(c.label, target));
-      const chosen = wrong ? (bad ?? good) : (good ?? bad);
-      if (!chosen) return { acted: false, intendedCorrect: false };
-      await page.locator('.aword__cell--tap').nth(chosen.i).click();
-      await page.waitForTimeout(850);
+      const chosen = wrong ? [bad ?? goods[0]] : (goods.length ? goods : [bad]);
+      if (!chosen[0]) return { acted: false, intendedCorrect: false };
+      for (const c of chosen) {
+        await page.locator('.aword__cell--tap').nth(c!.i).click();
+        await page.waitForTimeout(250);
+      }
+      await page.waitForTimeout(600);
       await clickFoot(page);
       await page.waitForTimeout(600);
       return { acted: true, intendedCorrect: !wrong, note: 'word hunt' };
@@ -260,11 +264,24 @@ export async function step(
         document.querySelector('.challenge__formhero')?.textContent ?? null);
 
       if (wordText) {
+        // The letter may sit in several places (توت: start + end) — pick them all, then Check.
         const letters = analyzeWord(wordText);
-        const idx = letters.findIndex((l) => sameLetter(l.base, target));
-        const slot = slotOf(idx, letters.length);
-        const want = translate(lang, `slot.${slot}`);
-        correctIdx = live.find((t) => strip(t.text) === strip(want))?.i;
+        const slots = new Set(letters.flatMap((l, i) => (sameLetter(l.base, target) ? [slotOf(i, letters.length)] : [])));
+        const wants = [...slots].map((s) => strip(translate(lang, `slot.${s}`)));
+        const rights = live.filter((t) => wants.includes(strip(t.text))).map((t) => t.i);
+        if (rights.length > 1) {
+          const picks = wrong ? [live.find((t) => !rights.includes(t.i))?.i ?? rights[0]] : rights;
+          for (const i of picks) {
+            await page.locator('.optgrid .tile').nth(i).click();
+            await page.waitForTimeout(150);
+          }
+          await clickFoot(page, new RegExp(translate(lang, 'btn.check')));
+          await page.waitForTimeout(900);
+          await clickFoot(page);
+          await page.waitForTimeout(500);
+          return { acted: true, intendedCorrect: !wrong, note: `${snap.prompt.slice(0, 30)} ×${rights.length}` };
+        }
+        correctIdx = rights[0];
       } else if (heroForm) {
         const pos = positionOfRendered(heroForm);
         const want = translate(lang, `pos.${pos}`);
