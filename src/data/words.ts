@@ -34,39 +34,40 @@ export const WORDS: Word[] = [
   { ar: 'جَبَل', translit: 'jabal', en: 'mountain', difficulty: 1, emoji: '⛰️' },
   { ar: 'اِسْم', translit: 'ism', en: 'name', difficulty: 2, emoji: '🏷️' },
   { ar: 'اِبْن', translit: 'ibn', en: 'son', difficulty: 2, emoji: '👦' },
-  { ar: 'عَصَا', translit: 'asaa', en: 'stick', difficulty: 2, emoji: '🦯' },
+  { ar: 'عَصَا', translit: 'asaa', en: 'stick', difficulty: 1, emoji: '🏑' },
   { ar: 'دُنْيَا', translit: 'dunyaa', en: 'world', difficulty: 3, emoji: '🌍' },
   { ar: 'سَمَا', translit: 'samaa', en: 'sky', difficulty: 2, emoji: '☁️' },
+  { ar: 'بَابَا', translit: 'baabaa', en: 'dad', difficulty: 1, emoji: '👨' },
 
   // ——— baa ———
   { ar: 'بَيْت', translit: 'bayt', en: 'house', difficulty: 1, emoji: '🏠' },
   { ar: 'بَحْر', translit: 'bahr', en: 'sea', difficulty: 1, emoji: '🌊' },
   { ar: 'بَقَرَة', translit: 'baqara', en: 'cow', difficulty: 2, emoji: '🐄' },
   { ar: 'بَطَّة', translit: 'batta', en: 'duck', difficulty: 2, emoji: '🦆' },
-  { ar: 'حَبْل', translit: 'habl', en: 'rope', difficulty: 2, emoji: '🪢' },
+  { ar: 'حَبْل', translit: 'habl', en: 'rope', difficulty: 2, emoji: '➰' },
   { ar: 'لَبَن', translit: 'laban', en: 'milk', difficulty: 1, emoji: '🥛' },
   { ar: 'قَلْب', translit: 'qalb', en: 'heart', difficulty: 1, emoji: '❤️' },
   { ar: 'حَلِيب', translit: 'haleeb', en: 'milk', difficulty: 2, emoji: '🥛' },
   { ar: 'عِنَب', translit: 'inab', en: 'grapes', difficulty: 1, emoji: '🍇' },
-  { ar: 'ذَهَب', translit: 'dhahab', en: 'gold', difficulty: 2, emoji: '🪙' },
+  { ar: 'ذَهَب', translit: 'dhahab', en: 'gold', difficulty: 2, emoji: '🥇' },
   { ar: 'حَقِيبَة', translit: 'haqeeba', en: 'bag', difficulty: 3, emoji: '🎒' },
-  { ar: 'مَكْتَب', translit: 'maktab', en: 'desk', difficulty: 2, emoji: '🗄️' },
+  { ar: 'مَكْتَب', translit: 'maktab', en: 'office', difficulty: 2, emoji: '🏢' },
 
   // ——— taa ———
   { ar: 'تَاج', translit: 'taaj', en: 'crown', difficulty: 1, emoji: '👑' },
   { ar: 'تُفَّاح', translit: 'tuffaah', en: 'apples', difficulty: 2, emoji: '🍎' },
   { ar: 'تَمْر', translit: 'tamr', en: 'dates', difficulty: 1, emoji: '🌴' },
-  { ar: 'تُوت', translit: 'toot', en: 'berries', difficulty: 1, emoji: '🫐' },
+  { ar: 'تُوت', translit: 'toot', en: 'berries', difficulty: 1, emoji: '🍓' },
   { ar: 'بِنْت', translit: 'bint', en: 'girl', difficulty: 1, emoji: '👧' },
   { ar: 'كُتُب', translit: 'kutub', en: 'books', difficulty: 2, emoji: '📚' },
-  { ar: 'بَيْتِي', translit: 'bayti', en: 'my house', difficulty: 2 },
+  { ar: 'بَيْتِي', translit: 'bayti', en: 'my house', difficulty: 2, emoji: '🏡' },
 
   // ——— thaa ———
   { ar: 'ثَلْج', translit: 'thalj', en: 'snow', difficulty: 1, emoji: '❄️' },
   { ar: 'ثَعْلَب', translit: 'thaalab', en: 'fox', difficulty: 2, emoji: '🦊' },
   { ar: 'ثَوْب', translit: 'thawb', en: 'garment', difficulty: 2, emoji: '👗' },
   { ar: 'مُثَلَّث', translit: 'muthallath', en: 'triangle', difficulty: 3, emoji: '🔺' },
-  { ar: 'حَدِيث', translit: 'hadeeth', en: 'talk', difficulty: 3 },
+  { ar: 'حَدِيث', translit: 'hadeeth', en: 'talk', difficulty: 3, emoji: '💬' },
   { ar: 'بَحْث', translit: 'bahth', en: 'search', difficulty: 3, emoji: '🔎' },
 
   // ——— jeem ———
@@ -74,11 +75,11 @@ export const WORDS: Word[] = [
   { ar: 'جَزَر', translit: 'jazar', en: 'carrots', difficulty: 2, emoji: '🥕' },
   { ar: 'شَجَرَة', translit: 'shajara', en: 'tree', difficulty: 2, emoji: '🌳' },
   { ar: 'دَجَاج', translit: 'dajaaj', en: 'chicken', difficulty: 2, emoji: '🐔' },
-  { ar: 'سِجَاد', translit: 'sijaad', en: 'carpet', difficulty: 3, emoji: '🧶' },
+  { ar: 'سِجَاد', translit: 'sijaad', en: 'carpet', difficulty: 3, emoji: '🧞' },
 
   // ——— haa (ح) ———
   { ar: 'حُوت', translit: 'hoot', en: 'whale', difficulty: 1, emoji: '🐋' },
-  { ar: 'حَجَر', translit: 'hajar', en: 'stone', difficulty: 1, emoji: '🪨' },
+  { ar: 'حَجَر', translit: 'hajar', en: 'stone', difficulty: 1, emoji: '🗿' },
   { ar: 'مِفْتَاح', translit: 'miftaah', en: 'key', difficulty: 3, emoji: '🔑' },
   { ar: 'سَبَح', translit: 'sabaha', en: 'he swam', difficulty: 2, emoji: '🏊' },
   { ar: 'لَحْم', translit: 'lahm', en: 'meat', difficulty: 2, emoji: '🍖' },
@@ -102,35 +103,35 @@ export const WORDS: Word[] = [
   { ar: 'ذِئْب', translit: 'dhib', en: 'wolf', difficulty: 2, emoji: '🐺' },
   { ar: 'ذُرَة', translit: 'dhura', en: 'corn', difficulty: 2, emoji: '🌽' },
   { ar: 'لَذِيذ', translit: 'ladheedh', en: 'delicious', difficulty: 3, emoji: '😋' },
-  { ar: 'أُسْتَاذ', translit: 'ustaadh', en: 'teacher', difficulty: 3, emoji: '👨‍🏫' },
-  { ar: 'نَافِذَة', translit: 'naafidha', en: 'window', difficulty: 3, emoji: '🪟' },
+  { ar: 'أُسْتَاذ', translit: 'ustaadh', en: 'teacher', difficulty: 3, emoji: '🎓' },
+  { ar: 'نَافِذَة', translit: 'naafidha', en: 'window', difficulty: 3, emoji: '🖼️' },
 
   // ——— raa ———
   { ar: 'رَمْل', translit: 'raml', en: 'sand', difficulty: 1, emoji: '🏜️' },
-  { ar: 'رَأْس', translit: 'ras', en: 'head', difficulty: 2, emoji: '🗣️' },
+  { ar: 'رَأْس', translit: 'ras', en: 'head', difficulty: 2, emoji: '👤' },
   { ar: 'قَمَر', translit: 'qamar', en: 'moon', difficulty: 1, emoji: '🌙' },
   { ar: 'سَرِير', translit: 'sareer', en: 'bed', difficulty: 3, emoji: '🛏️' },
   { ar: 'فَأْر', translit: 'far', en: 'mouse', difficulty: 2, emoji: '🐭' },
 
   // ——— zay ———
   { ar: 'زَهْرَة', translit: 'zahra', en: 'flower', difficulty: 2, emoji: '🌸' },
-  { ar: 'زَيْت', translit: 'zayt', en: 'oil', difficulty: 1, emoji: '🫒' },
+  { ar: 'زَيْت', translit: 'zayt', en: 'oil', difficulty: 1, emoji: '🛢️' },
   { ar: 'مَوْز', translit: 'mawz', en: 'banana', difficulty: 1, emoji: '🍌' },
   { ar: 'أَرُزّ', translit: 'aruzz', en: 'rice', difficulty: 2, emoji: '🍚' },
-  { ar: 'عَزِيز', translit: 'azeez', en: 'dear', difficulty: 3 },
+  { ar: 'عَزِيز', translit: 'azeez', en: 'dear', difficulty: 3, emoji: '💖' },
 
   // ——— seen ———
   { ar: 'سَمَك', translit: 'samak', en: 'fish', difficulty: 1, emoji: '🐟' },
   { ar: 'سَيَّارَة', translit: 'sayyaara', en: 'car', difficulty: 3, emoji: '🚗' },
   { ar: 'شَمْس', translit: 'shams', en: 'sun', difficulty: 1, emoji: '☀️' },
   { ar: 'عَسَل', translit: 'asal', en: 'honey', difficulty: 1, emoji: '🍯' },
-  { ar: 'كُرْسِيّ', translit: 'kursiyy', en: 'chair', difficulty: 2, emoji: '🪑' },
+  { ar: 'كُرْسِيّ', translit: 'kursiyy', en: 'chair', difficulty: 2, emoji: '💺' },
   { ar: 'قَوْس', translit: 'qaws', en: 'bow', difficulty: 2, emoji: '🏹' },
 
   // ——— sheen ———
   { ar: 'شَجَر', translit: 'shajar', en: 'trees', difficulty: 1, emoji: '🌲' },
   { ar: 'مِشْمِش', translit: 'mishmish', en: 'apricot', difficulty: 3, emoji: '🍑' },
-  { ar: 'عُشّ', translit: 'ushsh', en: 'nest', difficulty: 2, emoji: '🪺' },
+  { ar: 'عُشّ', translit: 'ushsh', en: 'nest', difficulty: 2, emoji: '🐣' },
   { ar: 'فِرَاش', translit: 'firaash', en: 'bedding', difficulty: 3, emoji: '🛌' },
   { ar: 'نَشِيط', translit: 'nasheet', en: 'active', difficulty: 3, emoji: '⚡' },
   { ar: 'شَيْء', translit: 'shay', en: 'thing', difficulty: 2, emoji: '📦' },
@@ -139,7 +140,7 @@ export const WORDS: Word[] = [
   { ar: 'صَقْر', translit: 'saqr', en: 'falcon', difficulty: 2, emoji: '🦅' },
   { ar: 'صَدِيق', translit: 'sadeeq', en: 'friend', difficulty: 3, emoji: '🤝' },
   { ar: 'عُصْفُور', translit: 'usfoor', en: 'small bird', difficulty: 3, emoji: '🐦' },
-  { ar: 'قَفَص', translit: 'qafas', en: 'cage', difficulty: 2, emoji: '🪤' },
+  { ar: 'قَفَص', translit: 'qafas', en: 'cage', difficulty: 2, emoji: '🦜' },
   { ar: 'قِصَّة', translit: 'qissa', en: 'story', difficulty: 2, emoji: '📚' },
 
   // ——— dad ———
@@ -158,7 +159,7 @@ export const WORDS: Word[] = [
 
   // ——— zaa (ظ) ———
   { ar: 'ظَرْف', translit: 'zarf', en: 'envelope', difficulty: 2, emoji: '✉️' },
-  { ar: 'ظِلّ', translit: 'zill', en: 'shadow', difficulty: 2, emoji: '🌑' },
+  { ar: 'ظِلّ', translit: 'zill', en: 'shadow', difficulty: 2, emoji: '👥' },
   { ar: 'نَظَّارَة', translit: 'nazzaara', en: 'glasses', difficulty: 3, emoji: '👓' },
   { ar: 'حَفِظ', translit: 'hafiza', en: 'he memorised', difficulty: 3, emoji: '🧠' },
   { ar: 'نَظِيف', translit: 'nazeef', en: 'clean', difficulty: 3, emoji: '🧼' },
@@ -167,21 +168,21 @@ export const WORDS: Word[] = [
   { ar: 'عَيْن', translit: 'ayn', en: 'eye', difficulty: 1, emoji: '👁️' },
   { ar: 'شَعْر', translit: 'shar', en: 'hair', difficulty: 2, emoji: '💇' },
   { ar: 'سَبْع', translit: 'sab', en: 'seven', difficulty: 2, emoji: '7️⃣' },
-  { ar: 'مَعَ', translit: 'maa', en: 'with', difficulty: 1 },
+  { ar: 'مَعَ', translit: 'maa', en: 'with', difficulty: 1, emoji: '🤝' },
 
   // ——— ghayn ———
-  { ar: 'غُرَاب', translit: 'ghuraab', en: 'crow', difficulty: 2, emoji: '🐦‍⬛' },
+  { ar: 'غُرَاب', translit: 'ghuraab', en: 'crow', difficulty: 2, emoji: '🐦' },
   { ar: 'صَغِير', translit: 'sagheer', en: 'small', difficulty: 3, emoji: '🐜' },
-  { ar: 'فَرَاغ', translit: 'faraagh', en: 'empty space', difficulty: 3 },
+  { ar: 'فَرَاغ', translit: 'faraagh', en: 'empty space', difficulty: 3, emoji: '🕳️' },
   { ar: 'لُغَة', translit: 'lugha', en: 'language', difficulty: 3, emoji: '🗣️' },
-  { ar: 'صَمْغ', translit: 'samgh', en: 'glue', difficulty: 3 },
+  { ar: 'صَمْغ', translit: 'samgh', en: 'glue', difficulty: 3, emoji: '🧴' },
 
   // ——— faa ———
   { ar: 'فِيل', translit: 'feel', en: 'elephant', difficulty: 1, emoji: '🐘' },
   { ar: 'فَرَاشَة', translit: 'faraasha', en: 'butterfly', difficulty: 3, emoji: '🦋' },
   { ar: 'سَفِينَة', translit: 'safeena', en: 'ship', difficulty: 3, emoji: '🚢' },
   { ar: 'كَفّ', translit: 'kaff', en: 'palm of hand', difficulty: 2, emoji: '🤚' },
-  { ar: 'رَفّ', translit: 'raff', en: 'shelf', difficulty: 2, emoji: '🗄️' },
+  { ar: 'رَفّ', translit: 'raff', en: 'shelf', difficulty: 2, emoji: '📚' },
 
   // ——— qaf ———
   { ar: 'قَلَم', translit: 'qalam', en: 'pen', difficulty: 1, emoji: '✏️' },
@@ -198,11 +199,11 @@ export const WORDS: Word[] = [
   // ——— lam ———
   { ar: 'لَيْل', translit: 'layl', en: 'night', difficulty: 1, emoji: '🌃' },
   { ar: 'لَوْز', translit: 'lawz', en: 'almonds', difficulty: 2, emoji: '🌰' },
-  { ar: 'حَلَق', translit: 'halaq', en: 'earring', difficulty: 3, emoji: '💍' },
+  { ar: 'حَلَق', translit: 'halaq', en: 'earring', difficulty: 3, emoji: '👂' },
   { ar: 'عَقْل', translit: 'aql', en: 'mind', difficulty: 2, emoji: '🧠' },
 
-  // ——— meem ———
-  { ar: 'مَوْز', translit: 'mawz', en: 'banana', difficulty: 1, emoji: '🍌' },
+  // ——— meem ——— (مَوْز is listed under zay; one entry per word)
+  { ar: 'شَمْعَة', translit: 'sham‘a', en: 'candle', difficulty: 2, emoji: '🕯️' },
   { ar: 'مِلْح', translit: 'milh', en: 'salt', difficulty: 2, emoji: '🧂' },
   { ar: 'نَجْم', translit: 'najm', en: 'star', difficulty: 1, emoji: '⭐' },
   { ar: 'حَمَام', translit: 'hamaam', en: 'pigeons', difficulty: 2, emoji: '🕊️' },
@@ -226,7 +227,7 @@ export const WORDS: Word[] = [
   { ar: 'وَلَد', translit: 'walad', en: 'boy', difficulty: 1, emoji: '👦' },
   { ar: 'وَزِير', translit: 'wazeer', en: 'minister', difficulty: 3, emoji: '🎩' },
   { ar: 'جَوْز', translit: 'jawz', en: 'walnuts', difficulty: 2, emoji: '🥜' },
-  { ar: 'دَلْو', translit: 'dalw', en: 'bucket', difficulty: 2, emoji: '🪣' },
+  { ar: 'دَلْو', translit: 'dalw', en: 'bucket', difficulty: 2, emoji: '🧺' },
   { ar: 'حُلْو', translit: 'hulw', en: 'sweet', difficulty: 2, emoji: '🍭' },
 
   // ——— yaa ———

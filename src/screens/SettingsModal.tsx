@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useGame } from '../game/state';
 import { storageAvailable } from '../game/persistence';
-import { canPronounce } from '../game/audio';
+import { canPronounce, onVoicesReady } from '../game/audio';
 import { Button, Modal, Switch, useT } from '../components/ui';
 import { LanguageToggle } from './LanguageToggle';
 
@@ -11,6 +11,8 @@ export function SettingsModal() {
   const { save } = useGame();
   const s = save.settings;
   const [confirming, setConfirming] = useState(false);
+  const [speakable, setSpeakable] = useState(canPronounce);
+  useEffect(() => onVoicesReady(() => setSpeakable(canPronounce())), []);
 
   const close = () => dispatch({ type: 'toggleSettings', open: false });
   const set = (key: keyof typeof s, value: boolean) =>
@@ -38,7 +40,7 @@ export function SettingsModal() {
         <Switch label={`🌗 ${t('set.contrast')}`} on={s.highContrast} onToggle={(v) => set('highContrast', v)} />
 
         <p className="tiny muted settings__note">
-          {canPronounce()
+          {speakable
             ? (t.lang === 'ar' ? '🔊 نطق الحروف متاح على هذا الجهاز.' : '🔊 Letter pronunciation is available on this device.')
             : (t.lang === 'ar' ? '🔇 لا يوجد صوت عربي مثبت على هذا الجهاز، فلن تظهر أزرار النطق.' : '🔇 No Arabic voice is installed here, so the speaker buttons stay hidden.')}
         </p>

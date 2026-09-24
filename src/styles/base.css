@@ -44,9 +44,12 @@
   --glow-gold: 0 0 22px rgba(255, 212, 92, 0.55);
   --glow-cyan: 0 0 26px rgba(111, 227, 255, 0.5);
 
-  --font-display: 'Baloo Bhaijaan 2', 'Fredoka', system-ui, sans-serif;
-  --font-ui: 'Baloo Bhaijaan 2', 'Fredoka', system-ui, sans-serif;
-  --font-arabic: 'Noto Naskh Arabic', 'Baloo Bhaijaan 2', 'Segoe UI', serif;
+  /* Colour-emoji faces sit right after the text faces, so icons never fall
+     through to a monochrome/tofu glyph in the Arabic or display font. */
+  --font-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol';
+  --font-display: 'Baloo Bhaijaan 2', 'Fredoka', var(--font-emoji), system-ui, sans-serif;
+  --font-ui: 'Baloo Bhaijaan 2', 'Fredoka', var(--font-emoji), system-ui, sans-serif;
+  --font-arabic: 'Noto Naskh Arabic', 'Baloo Bhaijaan 2', var(--font-emoji), 'Segoe UI', serif;
 
   --speed: 1;
 }
@@ -101,6 +104,12 @@ img { display: block; max-width: 100%; }
 .font-arabic,
 [lang='ar'] {
   font-family: var(--font-arabic);
+}
+
+.emoji {
+  font-family: var(--font-emoji), sans-serif;
+  font-style: normal;
+  line-height: 1;
 }
 
 /* The Arabic letter is always the hero — never let UI chrome outshine it. */

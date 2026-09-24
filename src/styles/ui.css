@@ -214,6 +214,12 @@
   color: #4d0a14;
 }
 .tile--muted { opacity: 0.4; filter: grayscale(0.7); }
+/* Multi-answer pick, not yet checked: gold ring, no right/wrong colour. */
+.tile--selected {
+  border-color: var(--gold-400);
+  box-shadow: 0 7px 0 #a9761b, 0 0 0 4px var(--gold-400), 0 0 24px rgba(255, 200, 80, 0.55);
+  transform: translateY(-2px);
+}
 .tile--done { cursor: default; }
 .tile__mark {
   position: absolute;

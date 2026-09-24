@@ -2,6 +2,12 @@ import type { Lang, Msg } from '../game/types';
 
 type Entry = string | ((v: Record<string, string | number>) => string);
 
+/** "start,end" → "أول الكلمة و آخر الكلمة" — slot keys are translated here, never shown raw. */
+function slotList(lang: Lang, slots: string | number | undefined): string {
+  const labels = String(slots ?? '').split(',').filter(Boolean).map((s) => translate(lang, `slot.${s}`));
+  return labels.join(lang === 'ar' ? ' و' : ' and the ');
+}
+
 const AR: Record<string, Entry> = {
   // — shell —
   'app.title': 'مغامرة تحدي الحروف',
@@ -11,6 +17,7 @@ const AR: Record<string, Entry> = {
   'btn.map': 'خريطة العوالم',
   'btn.back': 'رجوع',
   'btn.next': 'التالي',
+  'btn.check': 'تحقّق',
   'btn.nextLevel': 'المستوى التالي',
   'btn.replay': 'أعد المستوى',
   'btn.retry': 'حاول مرة أخرى',
@@ -62,7 +69,8 @@ const AR: Record<string, Entry> = {
   'disc.formsCount': (v) => (v.n === 2 ? 'شكلان' : `${v.n} أشكال`),
   'disc.sameLetter': 'كلها نفس الحرف!',
   'disc.oneForm': (v) => `${v.name} له شكل واحد فقط — لا يتصل بما بعده.`,
-  'disc.twoForms': (v) => `${v.name} له شكلان فقط: منفرد ومتصل بما قبله.`,
+  'disc.twoForms': (v) =>
+    `${v.name} يأتي في أول الكلمة ووسطها وآخرها، وله شكلان فقط: منفرد ${v.iso ?? ''} ومتصل بما قبله ${v.fin ?? ''} — ولا يتصل أبدًا بالحرف الذي بعده.`,
   'disc.fourForms': (v) => `${v.name} يتغيّر شكله حسب موقعه، لكنه يبقى نفس الحرف.`,
   'disc.inWords': 'وهذه أمثلة حقيقية',
   'disc.tapForms': 'المس الأشكال لترى التحوّل',
@@ -83,6 +91,8 @@ const AR: Record<string, Entry> = {
   'q.whichForm': (v) => `في أيّ موضع يُكتب هذا الشكل من حرف ${v.letter}؟`,
   'q.positionOf': (v) => `أين يقع حرف ${v.letter} في هذه الكلمة؟`,
   'q.matchAll': (v) => `اجمع كل أشكال حرف ${v.letter}`,
+  'q.multiHint': 'قد تكون هناك أكثر من إجابة — اختر كل الإجابات ثم اضغط «تحقّق»',
+  'q.huntCount': (v) => `وجدت ${v.found} من ${v.total}`,
   'q.wordHunt': (v) => `المس حرف ${v.letter} داخل الكلمة`,
   'q.similar': (v) => `انتبه للنقاط! أين حرف ${v.letter}؟`,
   'q.buildWord': (v) => `رتّب الحروف لتكوين كلمة «${v.word}»`,
@@ -95,8 +105,8 @@ const AR: Record<string, Entry> = {
   // — feedback —
   'fb.correct': 'أحسنت!',
   'fb.correctForm': (v) => `صحيح! ${v.form} هو شكل ${v.name} في ${v.where}.`,
-  'fb.correctPos': (v) => `صحيح! ${v.letter} يقع في ${v.where}.`,
-  'fb.correctHunt': (v) => `أحسنت! وجدت ${v.letter} في ${v.where}.`,
+  'fb.correctPos': (v) => `صحيح! ${v.letter} يقع في ${slotList('ar', v.slots)}.`,
+  'fb.correctHunt': (v) => `أحسنت! وجدت ${v.letter} في ${slotList('ar', v.slots)}.`,
   'fb.correctSame': (v) => `نعم! هذا نفس حرف ${v.name}.`,
   'fb.correctWord': (v) => `رائع! «${v.word}» — ${v.meaning}`,
   'fb.wrongLetter': (v) => `قريب! هذا حرف ${v.name}. ${v.hint}`,
@@ -225,6 +235,7 @@ const EN: Record<string, Entry> = {
   'btn.map': 'World map',
   'btn.back': 'Back',
   'btn.next': 'Next',
+  'btn.check': 'Check',
   'btn.nextLevel': 'Next level',
   'btn.replay': 'Replay level',
   'btn.retry': 'Try again',
@@ -272,7 +283,8 @@ const EN: Record<string, Entry> = {
   'disc.formsCount': (v) => `${v.n} shapes`,
   'disc.sameLetter': "They're all the same letter!",
   'disc.oneForm': (v) => `${v.name} has only one shape — it never joins to what follows.`,
-  'disc.twoForms': (v) => `${v.name} has only two shapes: on its own, and joined to the letter before it.`,
+  'disc.twoForms': (v) =>
+    `${v.name} can be at the beginning, middle or end of a word, with just two shapes: on its own ${v.iso ?? ''} or joined to the letter before it ${v.fin ?? ''} — it never joins the letter after it.`,
   'disc.fourForms': (v) => `${v.name} changes shape depending on where it sits — but it is still the same letter.`,
   'disc.inWords': 'Here it is in real words',
   'disc.tapForms': 'Tap the shapes to watch it change',
@@ -291,6 +303,8 @@ const EN: Record<string, Entry> = {
   'q.whichForm': (v) => `Where in a word is this shape of ${v.letter} used?`,
   'q.positionOf': (v) => `Where is ${v.letter} in this word?`,
   'q.matchAll': (v) => `Collect every shape of ${v.letter}`,
+  'q.multiHint': 'There may be more than one answer — pick them all, then press Check',
+  'q.huntCount': (v) => `Found ${v.found} of ${v.total}`,
   'q.wordHunt': (v) => `Tap the letter ${v.letter} inside the word`,
   'q.similar': (v) => `Watch the dots! Which one is ${v.letter}?`,
   'q.buildWord': (v) => `Arrange the letters to build “${v.word}”`,
@@ -302,8 +316,8 @@ const EN: Record<string, Entry> = {
 
   'fb.correct': 'Great!',
   'fb.correctForm': (v) => `Correct! ${v.form} is ${v.name} at the ${v.where}.`,
-  'fb.correctPos': (v) => `Correct! ${v.letter} is at the ${v.where}.`,
-  'fb.correctHunt': (v) => `Nice! You found ${v.letter} at the ${v.where}.`,
+  'fb.correctPos': (v) => `Correct! ${v.letter} is at the ${slotList('en', v.slots)}.`,
+  'fb.correctHunt': (v) => `Nice! You found ${v.letter} at the ${slotList('en', v.slots)}.`,
   'fb.correctSame': (v) => `Yes! That is the same letter ${v.name}.`,
   'fb.correctWord': (v) => `Great! “${v.word}” — ${v.meaning}`,
   'fb.wrongLetter': (v) => `Almost! This is ${v.name}. ${v.hint}`,

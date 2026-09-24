@@ -3,8 +3,8 @@ import { useCurrentLevel, useDispatch } from '../game/state';
 import { canPronounce, onVoicesReady, playSfx, pronounce } from '../game/audio';
 import { ArabicSpan, ArabicWord, FormStrip, LetterForm, RichText } from '../components/Arabic';
 import { Button, useSupport, useT } from '../components/ui';
-import { availablePositions, letterSpans, sameLetter } from '../game/arabic';
-import { positionLabelKey, shapeShiftSteps } from '../game/questions';
+import { availablePositions, letterSpans, sameLetter, shapeForm } from '../game/arabic';
+import { formPlan, shapeShiftSteps, stepLabelKey } from '../game/questions';
 import { letterByChar } from '../data/letters';
 import { worldOf } from '../data/worlds';
 
@@ -24,6 +24,8 @@ export function LetterDiscovery({ letter }: { letter: string }) {
   const l = letterByChar(letter);
   const world = worldOf(letter);
   const positions = availablePositions(letter);
+  // Shapes in reading order, each tied to its place (ا: أول ← وسط ← آخر).
+  const plan = formPlan(letter);
   const steps = shapeShiftSteps(letter, level?.tier ?? 'beginner');
 
   const [revealed, setRevealed] = useState(0);
@@ -33,18 +35,18 @@ export function LetterDiscovery({ letter }: { letter: string }) {
 
   // Reveal the forms one by one — the moment the game is built around.
   useEffect(() => {
-    if (revealed >= positions.length) return;
+    if (revealed >= plan.length) return;
     const id = window.setTimeout(() => {
       setRevealed((n) => n + 1);
       playSfx('reveal');
     }, revealed === 0 ? 500 : 900);
     return () => window.clearTimeout(id);
-  }, [revealed, positions.length]);
+  }, [revealed, plan.length]);
 
   if (!l) return null;
 
   const name = t.lang === 'ar' ? l.nameAr : l.nameEn;
-  const formsDone = revealed >= positions.length;
+  const formsDone = revealed >= plan.length;
 
   const say = (text: string) => {
     if (!pronounce(text)) playSfx('click');
@@ -89,17 +91,17 @@ export function LetterDiscovery({ letter }: { letter: string }) {
           <h2 className="discovery__h2">{t('disc.forms')}</h2>
           <FormStrip
             char={letter}
-            forms={positions.slice(0, Math.max(1, revealed))}
+            forms={plan.slice(0, Math.max(1, revealed)).map((p) => p.position)}
             active={revealed - 1}
             size="clamp(2.2rem, 8vw, 3.6rem)"
-            labels={positions.map((p) => t(positionLabelKey(p)))}
+            labels={plan.map((p) => t(stepLabelKey(p)))}
           />
           <p className="discovery__formnote">
             <RichText>
               {positions.length === 1
                 ? t('disc.oneForm', { name })
                 : positions.length === 2
-                  ? t('disc.twoForms', { name })
+                  ? t('disc.twoForms', { name, iso: shapeForm(letter, 'isolated'), fin: `ـ${letter}` })
                   : t('disc.fourForms', { name })}
             </RichText>
           </p>
@@ -115,10 +117,11 @@ export function LetterDiscovery({ letter }: { letter: string }) {
             {steps.map((s, i) =>
               s.example ? (
                 <li
-                  key={s.position}
+                  key={`${s.position}-${s.slot ?? ''}`}
                   className={`discovery__word ${revealed > i ? 'anim-rise' : 'is-hidden'}`}
+                  dir="rtl"
                 >
-                  <span className="discovery__poslabel">{t(positionLabelKey(s.position))}</span>
+                  <span className="discovery__poslabel">{t(stepLabelKey(s))}</span>
                   <div className="discovery__wordmain">
                     {s.example.word.emoji && (
                       <span className="discovery__emoji" aria-hidden="true">{s.example.word.emoji}</span>

@@ -7,7 +7,7 @@ import { availablePositions } from '../game/arabic';
 import { playSfx } from '../game/audio';
 import { ArabicSpan, FormStrip, RichText } from '../components/Arabic';
 import { Button, Confetti, CountUp, Panel, Stars, useT } from '../components/ui';
-import { positionLabelKey } from '../game/questions';
+import { formPlan, stepLabelKey } from '../game/questions';
 
 /**
  * Level complete — the shield-and-ribbon celebration from the design.
@@ -57,7 +57,7 @@ export function ResultScreen() {
 
           {/* ——— what the run actually produced ——— */}
           <Panel variant="glass" className="result__stats">
-            <Stat label={t('res.coins')} icon="🪙" value={outcome.coins} />
+            <Stat label={t('res.coins')} icon="💰" value={outcome.coins} />
             <Stat label={t('res.xp')} icon="✨" value={outcome.xp} />
             <Stat label={t('res.accuracy')} icon="🎯" value={`${Math.round(outcome.accuracy * 100)}%`} />
             <Stat label={t('res.bestCombo')} icon="🔥" value={`×${outcome.bestCombo}`} />
@@ -77,9 +77,9 @@ export function ResultScreen() {
               {forms.length > 1 && (
                 <FormStrip
                   char={letter}
-                  forms={forms}
+                  forms={formPlan(letter).map((p) => p.position)}
                   size="clamp(1.6rem, 5.5vw, 2.4rem)"
-                  labels={forms.map((p) => t(positionLabelKey(p)))}
+                  labels={formPlan(letter).map((p) => t(stepLabelKey(p)))}
                 />
               )}
             </Panel>
@@ -128,7 +128,7 @@ export function ResultScreen() {
           </div>
 
           <p className="result__totals">
-            🪙 <ArabicSpan>{''}</ArabicSpan>{save.progress.coins.toLocaleString()} · ✨ {save.progress.xp.toLocaleString()}
+            💰 <ArabicSpan>{''}</ArabicSpan>{save.progress.coins.toLocaleString()} · ✨ {save.progress.xp.toLocaleString()}
           </p>
         </div>
       </div>
