@@ -124,7 +124,7 @@ export function WordBuild({ question }: { question: Question }) {
           <ArabicSpan className="hero-letter">{builtText || ' '}</ArabicSpan>
         </button>
         {builtText.length > 0 && (
-          <p className="build__forms" dir="ltr">
+          <p className="build__forms" dir="rtl">
             {analysedBuilt.map((l, i) => (
               <span key={i} className="build__formchip">
                 <ArabicSpan>{l.base}</ArabicSpan>

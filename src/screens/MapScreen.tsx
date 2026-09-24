@@ -31,7 +31,7 @@ export function MapScreen() {
         </Button>
         <Banner>🗺️ {t('map.title')}</Banner>
         <div className="hud__spacer" />
-        <Pill icon="🪙">{save.progress.coins}</Pill>
+        <Pill icon="💰">{save.progress.coins}</Pill>
         <Pill icon="⭐">
           {Object.values(save.progress.levels).reduce((n, r) => n + r.stars, 0)}
         </Pill>

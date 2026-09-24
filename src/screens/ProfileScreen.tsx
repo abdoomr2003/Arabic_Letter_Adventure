@@ -7,9 +7,8 @@ import { masteredLetters, masteryOf, similarAccuracy, strugglingLetters } from '
 import { playerLevel } from '../game/scoring';
 import { availablePositions } from '../game/arabic';
 import { ArabicSpan } from '../components/Arabic';
-import { Banner, Button, Panel, ProgressBar, Stars, useT } from '../components/ui';
-
-const AVATARS = ['🧑‍🚀', '🧙', '🦸', '🧝', '🐱', '🦉', '🐼', '🦊'];
+import { Avatar, Banner, Button, Panel, ProgressBar, Stars, useT } from '../components/ui';
+import { AVATARS } from '../game/persistence';
 
 /**
  * A game character sheet, not a school report: avatar, adventurer level, the
@@ -53,7 +52,7 @@ export function ProfileScreen() {
           {/* ——— identity ——— */}
           <Panel variant="glass" className="profile__card">
             <div className="profile__avatarcol">
-              <span className="profile__avatar" aria-hidden="true">{save.profile.avatar}</span>
+              <Avatar className="profile__avatar" />
               <div className="profile__avatars" role="group" aria-label={t('prof.title')}>
                 {AVATARS.map((a) => (
                   <button
@@ -82,7 +81,7 @@ export function ProfileScreen() {
               />
               <p className="profile__levelrow">
                 <span className="chip chip--gold">{t('prof.level')} {pl.level}</span>
-                <span className="chip">🪙 {p.coins.toLocaleString()}</span>
+                <span className="chip">💰 {p.coins.toLocaleString()}</span>
                 <span className="chip">⭐ {stars}/{LEVELS.length * 3}</span>
               </p>
               <div className="profile__xp">

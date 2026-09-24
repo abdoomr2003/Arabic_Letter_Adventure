@@ -97,7 +97,7 @@
   font-size: clamp(1.4rem, 5vw, 2.4rem);
   color: var(--cyan-400);
   text-shadow: 0 0 18px rgba(111, 227, 255, 0.6);
-  direction: ltr;
+  direction: rtl;
 }
 .home__forms span:nth-child(even) { color: var(--ink-mute); font-size: 0.6em; }
 
@@ -436,7 +436,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: clamp(4px, 1.4vw, 12px);
-  direction: ltr;
+  direction: rtl;
 }
 .formstrip__item { display: inline-flex; align-items: center; gap: clamp(4px, 1.4vw, 12px); }
 .formstrip__arrow { color: var(--ink-mute); font-size: clamp(0.9rem, 2.6vw, 1.3rem); }
@@ -676,7 +676,7 @@
 .shifter__hint { text-align: center; color: var(--ink-dim); font-size: 0.88rem; max-width: 54ch; line-height: 1.5; }
 
 .shifter__finale { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
-.shifter__examples { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.shifter__examples { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; direction: rtl; }
 .shifter__example {
   display: flex;
   flex-direction: column;

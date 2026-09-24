@@ -1,18 +1,40 @@
+import { useState } from 'react';
 import { ArabicWord, LetterForm } from '../components/Arabic';
-import { useT } from '../components/ui';
+import { Button, useT } from '../components/ui';
 import { ChallengeFrame, OptionGrid, ResultBar, TargetBadge, useChallenge } from './kit';
 import { letterSpans, sameLetter } from '../game/arabic';
-import type { Question } from '../game/types';
+import type { Option, Question } from '../game/types';
 
 /**
  * GAME 1 / 2 / 3, the similar-letter round and the timed round all share one
- * shape: a prompt, a grid of options, exactly one of which is right.  How an
- * option draws itself comes from its `render` descriptor, so adding a question
- * type does not mean adding a screen.
+ * shape: a prompt and a grid of options.  Usually exactly one is right; when
+ * `need > 1` (the letter sits in two places, as in توت) the learner toggles
+ * every right option and presses Check.  How an option draws itself comes from
+ * its `render` descriptor, so adding a question type does not mean adding a screen.
  */
 export function Mcq({ question, fast = false }: { question: Question; fast?: boolean }) {
   const t = useT();
   const { result, submit, next } = useChallenge(question, { autoNextMs: fast ? 700 : 1200 });
+  const multi = question.need > 1;
+  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+  const [selectedFor, setSelectedFor] = useState(question.id);
+  if (selectedFor !== question.id) {
+    setSelectedFor(question.id);
+    setSelected(new Set());
+  }
+
+  const toggle = (o: Option) => {
+    const nextSet = new Set(selected);
+    if (nextSet.has(o.id)) nextSet.delete(o.id);
+    else nextSet.add(o.id);
+    setSelected(nextSet);
+  };
+
+  const check = () => {
+    const picks = question.options.filter((o) => selected.has(o.id));
+    const allRight = question.options.every((o) => o.correct === selected.has(o.id));
+    submit(allRight, picks.find((o) => !o.correct));
+  };
 
   const aside = (() => {
     // A word question: the word is the thing being read, shown big with the
@@ -59,13 +81,24 @@ export function Mcq({ question, fast = false }: { question: Question; fast?: boo
       prompt={t.msg(question.prompt)}
       sub={question.subPrompt ? t.msg(question.subPrompt) : undefined}
       aside={aside}
-      footer={<ResultBar question={question} result={result} onNext={next} />}
+      footer={
+        multi && !result ? (
+          <div className="resultbar">
+            <Button tone="gold" onClick={check} disabled={selected.size === 0}>
+              {t('btn.check')} ✓
+            </Button>
+          </div>
+        ) : (
+          <ResultBar question={question} result={result} onNext={next} />
+        )
+      }
     >
       <OptionGrid
         options={question.options}
         result={result}
         columns={columns}
-        onPick={(o) => submit(o.correct, o)}
+        selected={multi ? selected : undefined}
+        onPick={(o) => (multi ? toggle(o) : submit(o.correct, o))}
       />
     </ChallengeFrame>
   );

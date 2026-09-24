@@ -9,6 +9,9 @@
 import { LETTERS } from '../src/data/letters';
 import { availablePositions, joiningType, allForms, analyzeWord } from '../src/game/arabic';
 import { WORDS, wordsWithLetterAt, wordsWithLetter } from '../src/data/words';
+import { WORLDS } from '../src/data/worlds';
+import { BADGES } from '../src/data/rewards';
+import { AVATARS } from '../src/game/persistence';
 
 let problems = 0;
 const warn = (m: string) => {
@@ -75,6 +78,27 @@ for (const w of WORDS) {
   for (const l of analyzeWord(w.ar)) {
     if (!known.has(l.base)) warn(`word ${w.ar} contains unknown character "${l.base}" (U+${l.base.codePointAt(0)!.toString(16)})`);
   }
+}
+
+// 6. One entry per word — duplicates skew random picks and pools.
+const seenWords = new Set<string>();
+for (const w of WORDS) {
+  if (seenWords.has(w.ar)) warn(`word ${w.ar} is listed more than once`);
+  seenWords.add(w.ar);
+}
+
+// 7. Every icon must be a widely supported emoji. Emoji 12+ blocks and ZWJ
+//    sequences render as tofu or split in two on older Windows / Android.
+const MODERN_EMOJI = /[\u{1FA70}-\u{1FAFF}\u{1F6D5}-\u{1F6DF}\u{1F7E0}-\u{1F7FF}\u{1F90C}-\u{1F90F}‍]/u;
+const icons: [string, string | undefined][] = [
+  ...WORDS.map((w) => [`word ${w.ar}`, w.emoji] as [string, string | undefined]),
+  ...WORLDS.map((w) => [`world ${w.id}`, w.icon] as [string, string]),
+  ...BADGES.map((b) => [`badge ${b.id}`, b.icon] as [string, string]),
+  ...AVATARS.map((a) => ['avatar', a] as [string, string]),
+];
+for (const [where, icon] of icons) {
+  if (!icon) warn(`${where} has no picture`);
+  else if (MODERN_EMOJI.test(icon)) warn(`${where} uses ${icon}, which older devices cannot draw`);
 }
 
 console.log(problems === 0 ? '\n✓ content OK\n' : `\n${problems} problem(s)\n`);

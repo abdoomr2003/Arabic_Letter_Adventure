@@ -1,7 +1,7 @@
 import { useDispatch, useGame, useCompleted } from '../game/state';
 import { LEVELS, LEVEL_ORDER, isLevelUnlocked } from '../data/levels';
 import { playerLevel } from '../game/scoring';
-import { Button, Pill, Stars, useT } from '../components/ui';
+import { Avatar, Button, Pill, Stars, useT } from '../components/ui';
 import { translate } from '../data/i18n';
 import { ArabicSpan } from '../components/Arabic';
 import { LanguageToggle } from './LanguageToggle';
@@ -44,8 +44,8 @@ export function HomeScreen() {
         </h1>
         <p className="home__sub">{t('app.subtitle')}</p>
 
-        <div className="home__forms" aria-hidden="true">
-          <span>ب</span><span>→</span><span>بـ</span><span>→</span><span>ـبـ</span><span>→</span><span>ـب</span>
+        <div className="home__forms" dir="rtl" aria-hidden="true">
+          <span>ب</span><span>←</span><span>بـ</span><span>←</span><span>ـبـ</span><span>←</span><span>ـب</span>
         </div>
 
         <div className="home__cta">
@@ -67,7 +67,7 @@ export function HomeScreen() {
             🗺️ {t('btn.map')}
           </Button>
           <Button tone="ghost" size="sm" onClick={() => dispatch({ type: 'setScreen', screen: 'profile' })}>
-            {save.profile.avatar} {t('btn.profile')}
+            <Avatar /> {t('btn.profile')}
           </Button>
           <Button tone="ghost" size="sm" onClick={() => dispatch({ type: 'setScreen', screen: 'howto' })}>
             📖 {t('btn.howto')}
@@ -81,7 +81,7 @@ export function HomeScreen() {
           <p className="home__progress">
             <span className="chip chip--gold">{t('prof.level')} {pl.level}</span>
             <Stars n={Math.min(3, Math.round((stars / maxStars) * 3))} />
-            <span className="chip">🪙 {save.progress.coins}</span>
+            <span className="chip">💰 {save.progress.coins}</span>
           </p>
         )}
       </main>

@@ -192,7 +192,7 @@ export function ShapeShifter({ letter }: { letter: string }) {
       </div>
 
       {/* The three places in a word the letter can be dropped into. */}
-      <div className="shifter__slots" dir={t.rtl ? 'rtl' : 'ltr'}>
+      <div className="shifter__slots" dir="rtl">
         {slots.map((s) => {
           const isTarget = SLOT_FOR[step.position] === s;
           const state = solvedThisStep && isTarget ? 'is-filled'

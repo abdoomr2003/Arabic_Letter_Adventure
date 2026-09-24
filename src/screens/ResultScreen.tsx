@@ -57,7 +57,7 @@ export function ResultScreen() {
 
           {/* ——— what the run actually produced ——— */}
           <Panel variant="glass" className="result__stats">
-            <Stat label={t('res.coins')} icon="🪙" value={outcome.coins} />
+            <Stat label={t('res.coins')} icon="💰" value={outcome.coins} />
             <Stat label={t('res.xp')} icon="✨" value={outcome.xp} />
             <Stat label={t('res.accuracy')} icon="🎯" value={`${Math.round(outcome.accuracy * 100)}%`} />
             <Stat label={t('res.bestCombo')} icon="🔥" value={`×${outcome.bestCombo}`} />
@@ -128,7 +128,7 @@ export function ResultScreen() {
           </div>
 
           <p className="result__totals">
-            🪙 <ArabicSpan>{''}</ArabicSpan>{save.progress.coins.toLocaleString()} · ✨ {save.progress.xp.toLocaleString()}
+            💰 <ArabicSpan>{''}</ArabicSpan>{save.progress.coins.toLocaleString()} · ✨ {save.progress.xp.toLocaleString()}
           </p>
         </div>
       </div>

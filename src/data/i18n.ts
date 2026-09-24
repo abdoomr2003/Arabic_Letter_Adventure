@@ -2,6 +2,12 @@ import type { Lang, Msg } from '../game/types';
 
 type Entry = string | ((v: Record<string, string | number>) => string);
 
+/** "start,end" → "أول الكلمة و آخر الكلمة" — slot keys are translated here, never shown raw. */
+function slotList(lang: Lang, slots: string | number | undefined): string {
+  const labels = String(slots ?? '').split(',').filter(Boolean).map((s) => translate(lang, `slot.${s}`));
+  return labels.join(lang === 'ar' ? ' و' : ' and the ');
+}
+
 const AR: Record<string, Entry> = {
   // — shell —
   'app.title': 'مغامرة تحدي الحروف',
@@ -11,6 +17,7 @@ const AR: Record<string, Entry> = {
   'btn.map': 'خريطة العوالم',
   'btn.back': 'رجوع',
   'btn.next': 'التالي',
+  'btn.check': 'تحقّق',
   'btn.nextLevel': 'المستوى التالي',
   'btn.replay': 'أعد المستوى',
   'btn.retry': 'حاول مرة أخرى',
@@ -83,6 +90,8 @@ const AR: Record<string, Entry> = {
   'q.whichForm': (v) => `في أيّ موضع يُكتب هذا الشكل من حرف ${v.letter}؟`,
   'q.positionOf': (v) => `أين يقع حرف ${v.letter} في هذه الكلمة؟`,
   'q.matchAll': (v) => `اجمع كل أشكال حرف ${v.letter}`,
+  'q.multiHint': 'قد تكون هناك أكثر من إجابة — اختر كل الإجابات ثم اضغط «تحقّق»',
+  'q.huntCount': (v) => `وجدت ${v.found} من ${v.total}`,
   'q.wordHunt': (v) => `المس حرف ${v.letter} داخل الكلمة`,
   'q.similar': (v) => `انتبه للنقاط! أين حرف ${v.letter}؟`,
   'q.buildWord': (v) => `رتّب الحروف لتكوين كلمة «${v.word}»`,
@@ -95,8 +104,8 @@ const AR: Record<string, Entry> = {
   // — feedback —
   'fb.correct': 'أحسنت!',
   'fb.correctForm': (v) => `صحيح! ${v.form} هو شكل ${v.name} في ${v.where}.`,
-  'fb.correctPos': (v) => `صحيح! ${v.letter} يقع في ${v.where}.`,
-  'fb.correctHunt': (v) => `أحسنت! وجدت ${v.letter} في ${v.where}.`,
+  'fb.correctPos': (v) => `صحيح! ${v.letter} يقع في ${slotList('ar', v.slots)}.`,
+  'fb.correctHunt': (v) => `أحسنت! وجدت ${v.letter} في ${slotList('ar', v.slots)}.`,
   'fb.correctSame': (v) => `نعم! هذا نفس حرف ${v.name}.`,
   'fb.correctWord': (v) => `رائع! «${v.word}» — ${v.meaning}`,
   'fb.wrongLetter': (v) => `قريب! هذا حرف ${v.name}. ${v.hint}`,
@@ -225,6 +234,7 @@ const EN: Record<string, Entry> = {
   'btn.map': 'World map',
   'btn.back': 'Back',
   'btn.next': 'Next',
+  'btn.check': 'Check',
   'btn.nextLevel': 'Next level',
   'btn.replay': 'Replay level',
   'btn.retry': 'Try again',
@@ -291,6 +301,8 @@ const EN: Record<string, Entry> = {
   'q.whichForm': (v) => `Where in a word is this shape of ${v.letter} used?`,
   'q.positionOf': (v) => `Where is ${v.letter} in this word?`,
   'q.matchAll': (v) => `Collect every shape of ${v.letter}`,
+  'q.multiHint': 'There may be more than one answer — pick them all, then press Check',
+  'q.huntCount': (v) => `Found ${v.found} of ${v.total}`,
   'q.wordHunt': (v) => `Tap the letter ${v.letter} inside the word`,
   'q.similar': (v) => `Watch the dots! Which one is ${v.letter}?`,
   'q.buildWord': (v) => `Arrange the letters to build “${v.word}”`,
@@ -302,8 +314,8 @@ const EN: Record<string, Entry> = {
 
   'fb.correct': 'Great!',
   'fb.correctForm': (v) => `Correct! ${v.form} is ${v.name} at the ${v.where}.`,
-  'fb.correctPos': (v) => `Correct! ${v.letter} is at the ${v.where}.`,
-  'fb.correctHunt': (v) => `Nice! You found ${v.letter} at the ${v.where}.`,
+  'fb.correctPos': (v) => `Correct! ${v.letter} is at the ${slotList('en', v.slots)}.`,
+  'fb.correctHunt': (v) => `Nice! You found ${v.letter} at the ${slotList('en', v.slots)}.`,
   'fb.correctSame': (v) => `Yes! That is the same letter ${v.name}.`,
   'fb.correctWord': (v) => `Great! “${v.word}” — ${v.meaning}`,
   'fb.wrongLetter': (v) => `Almost! This is ${v.name}. ${v.hint}`,
